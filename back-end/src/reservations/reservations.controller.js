@@ -67,6 +67,7 @@ function hasRequiredProperties(req, res, next) {
       message:
         "Required property people is missing or zero. Must be a number greater than zero.",
     });
+  next();
 }
 
 async function create(req, res) {}
