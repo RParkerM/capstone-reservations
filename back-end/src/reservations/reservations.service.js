@@ -6,4 +6,14 @@ function list(reservation_date) {
   return knex(`${TABLE}`).select("*").where({ reservation_date });
 }
 
-module.exports = { list };
+function read(reservation_id) {
+  return knex(`${TABLE}`).select("*").where({ reservation_id }).first();
+}
+
+function create(reservation) {
+  return knex(`${TABLE}`)
+    .insert(reservation)
+    .then((createdRecords) => createdRecords[0]);
+}
+
+module.exports = { list, read, create };

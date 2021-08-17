@@ -2,13 +2,35 @@ const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 const { isYYYYMMDD, is24HrTime } = require("../utils/validation");
-
 const getToday = require("../utils/time").getTodayYYYYMMdd;
+
+const VALID_PROPERTIES = [
+  "first_name",
+  "last_name",
+  "mobile_number",
+  "reservation_date",
+  "reservation_time",
+  "people",
+];
+
+function hasOnlyValidProperties(req, res, next) {
+  const { data = {} } = req.body;
+  const invalidFields = Object.keys(data).filter(
+    (field) => !VALID_PROPERTIES.includes(field)
+  );
+  if (invalidFields.length) {
+    return next({
+      status: 400,
+      message: `Invalid field(s): ${invalidFields.join(", ")}`,
+    });
+  }
+  next();
+}
 
 /**
  * Validates query parameter date matches YYYY-MM-DD format
  */
-function hasValidDate(req, res, next) {
+function hasValidDateQuery(req, res, next) {
   let reso_date = req.query.date ? req.query.date : getToday();
   if (!isYYYYMMDD(reso_date))
     return next({
@@ -70,7 +92,23 @@ function hasRequiredProperties(req, res, next) {
   next();
 }
 
-async function create(req, res) {}
+async function reservationExists(req, res) {
+  const { reservation_id } = req.params;
+  if (reservation_id === undefined)
+    next({ status: 500, message: "Internal error. Reservation id is missing" });
+  const reservation = await service.get(reservation_id);
+  if (!reservation)
+    return next({
+      status: 404,
+      message: `Reservation not found with id: ${reservation_id}`,
+    });
+  res.locals.reservation = reservation;
+}
+
+async function create(req, res) {
+  const reservation = await service.create(req.data);
+  res.status(201).json({ data: reservation });
+}
 /**
  * List handler for reservation resources
  */
@@ -79,6 +117,16 @@ async function list(req, res) {
   res.status(200).json({ data });
 }
 
+async function read(req, res) {
+  res.json({ data: res.locals.reservation });
+}
+
 module.exports = {
-  list: [hasValidDate, asyncErrorBoundary(list)],
+  list: [hasValidDateQuery, asyncErrorBoundary(list)],
+  create: [
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    asyncErrorBoundary(create),
+  ],
+  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
 };
