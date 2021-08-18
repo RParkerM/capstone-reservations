@@ -9,6 +9,7 @@ import ErrorAlert from "../layout/ErrorAlert";
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
+  console.log(date);
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
 
@@ -26,8 +27,8 @@ function Dashboard({ date }) {
   return (
     <main>
       <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for date</h4>
+      <div className='d-md-flex mb-3'>
+        <h4 className='mb-0'>Reservations for date</h4>
       </div>
       <ErrorAlert error={reservationsError} />
       {JSON.stringify(reservations)}
