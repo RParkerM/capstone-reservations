@@ -3,6 +3,8 @@ import "./NewReservation.css";
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 
+import { createReservation } from "../../utils/api";
+
 // import { Link } from "react-router-dom";
 
 /**
@@ -16,15 +18,28 @@ function NewReservation({ reservation = {}, handleSubmit = () => {} }) {
   const history = useHistory();
 
   const handleChange = ({ target }) => {
-    console.log(target);
     const { name, value } = target;
     setReservationInfo({ ...reservationInfo, [name]: value });
-    console.log(reservationInfo);
   };
 
-  const submit = (event) => {
+  const submit = async (event) => {
+    const abortController = new AbortController();
+
     event.preventDefault();
     console.log(reservationInfo);
+    try {
+      const reservation = await createReservation(
+        reservationInfo,
+        abortController.signal
+      );
+      history.push(`/dashboard?date=${reservationInfo.reservation_date}`);
+    } catch (err) {
+      if (err.name === "AbortError") {
+        console.info("Aborted");
+      } else {
+        throw err;
+      }
+    }
     handleSubmit(reservationInfo);
   };
 
