@@ -80,34 +80,38 @@ function hasRequiredProperties(req, res, next) {
   if (!reservation_time || !is24HrTime(reservation_time))
     return next({
       status: 400,
-      message:
-        "Required property reservation_time is missing or invalid. Required 24 hour format: HH:SS",
+      message: `Required property reservation_time is missing or invalid. Required 24 hour format: HH:SS. Received ${reservation_time}`,
     });
-  if (!people || isNaN(people))
+  if (typeof people !== "number" || isNaN(people) || !people) {
     return next({
       status: 400,
       message:
         "Required property people is missing or zero. Must be a number greater than zero.",
     });
+  }
   next();
 }
 
-async function reservationExists(req, res) {
-  const { reservation_id } = req.params;
-  if (reservation_id === undefined)
+async function reservationExists(req, res, next) {
+  const { reservationId } = req.params;
+  if (reservationId === undefined)
     next({ status: 500, message: "Internal error. Reservation id is missing" });
-  const reservation = await service.get(reservation_id);
+  const reservation = await service.read(reservationId);
   if (!reservation)
     return next({
       status: 404,
-      message: `Reservation not found with id: ${reservation_id}`,
+      message: `Reservation not found with id: ${reservationId}`,
     });
   res.locals.reservation = reservation;
 }
 
-async function create(req, res) {
-  const reservation = await service.create(req.data);
-  res.status(201).json({ data: reservation });
+async function create(req, res, next) {
+  try {
+    const reservation = await service.create(req.body.data);
+    res.status(201).json({ data: reservation });
+  } catch (e) {
+    next({ status: 500, message: e });
+  }
 }
 /**
  * List handler for reservation resources
@@ -124,8 +128,8 @@ async function read(req, res) {
 module.exports = {
   list: [hasValidDateQuery, asyncErrorBoundary(list)],
   create: [
-    hasOnlyValidProperties,
     hasRequiredProperties,
+    hasOnlyValidProperties,
     asyncErrorBoundary(create),
   ],
   read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
