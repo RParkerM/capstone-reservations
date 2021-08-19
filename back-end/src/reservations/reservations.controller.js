@@ -3,6 +3,7 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 const { isYYYYMMDD, is24HrTime } = require("../utils/validation");
 const getToday = require("../utils/time").getTodayYYYYMMdd;
+const { getLocalTime, isTuesday } = require("../utils/time");
 
 const VALID_PROPERTIES = [
   "first_name",
@@ -38,6 +39,40 @@ function hasValidDateQuery(req, res, next) {
       message: `Date must be in YYYY-MM-DD format. Received ${reso_date}`,
     });
   res.locals.date = reso_date;
+  next();
+}
+
+function isValidDate(req, res, next) {
+  console.log("is it previous? IDK");
+  const { reservation_date, reservation_time } = req.body.data;
+  const year = reservation_date.substring(0, 4);
+  const month = reservation_date.substring(5, 7);
+  const day = reservation_date.substring(8, 10);
+  const hour = reservation_time.substring(0, 2);
+  const minutes = reservation_time.substring(3, 5);
+
+  console.info(`${year}-${month}-${day}`);
+
+  const reso_date = new Date(year, month - 1, day, hour, minutes);
+  reso_date.setMinutes(reso_date.getMinutes() - reso_date.getTimezoneOffset());
+
+  console.info("local time", getLocalTime());
+  console.info("now", reso_date);
+
+  if (reso_date < getLocalTime()) {
+    return next({
+      status: 400,
+      message: `Reservation date must be in the future. Received ${year}-${month}-${day} ${hour}:${minutes}`,
+    });
+  }
+
+  if (isTuesday(reso_date)) {
+    return next({
+      status: 400,
+      message: `Reservation cannot fall on a Tuesday, when restaurant is closed. Received date ${year}-${month}.`,
+    });
+  }
+
   next();
 }
 
@@ -130,6 +165,7 @@ module.exports = {
   create: [
     hasRequiredProperties,
     hasOnlyValidProperties,
+    isValidDate,
     asyncErrorBoundary(create),
   ],
   read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],

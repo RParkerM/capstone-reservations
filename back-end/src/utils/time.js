@@ -10,4 +10,8 @@ function getLocalTime() {
   return date;
 }
 
-module.exports = { getTodayYYYYMMdd, getLocalTime };
+function isTuesday(date) {
+  return date.getDay() == 2;
+}
+
+module.exports = { getTodayYYYYMMdd, getLocalTime, isTuesday };
