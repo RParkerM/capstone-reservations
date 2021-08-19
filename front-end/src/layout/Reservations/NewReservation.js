@@ -151,8 +151,6 @@ function NewReservation({ reservation = {}, handleSubmit = () => {} }) {
   );
 }
 
-// display a Submit button that, when clicked, saves the new reservation, then displays the /dashboard page for the date of the new reservation
-// display a Cancel button that, when clicked, returns the user to the previous page
-// display any error messages returned from the API
+///TODO display any error messages returned from the API
 
 export default NewReservation;
