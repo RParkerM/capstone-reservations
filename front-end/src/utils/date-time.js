@@ -57,7 +57,7 @@ export function today() {
  *  the date one day prior to currentDate, formatted as YYYY-MM-DD
  */
 export function previous(currentDate) {
-  let [ year, month, day ] = currentDate.split("-");
+  let [year, month, day] = currentDate.split("-");
   month -= 1;
   const date = new Date(year, month, day);
   date.setMonth(date.getMonth());
@@ -73,10 +73,25 @@ export function previous(currentDate) {
  *  the date one day after currentDate, formatted as YYYY-MM-DD
  */
 export function next(currentDate) {
-  let [ year, month, day ] = currentDate.split("-");
+  let [year, month, day] = currentDate.split("-");
   month -= 1;
   const date = new Date(year, month, day);
   date.setMonth(date.getMonth());
   date.setDate(date.getDate() + 1);
   return asDateString(date);
+}
+
+export function getDateFromReso(reservationInfo) {
+  const { reservation_date, reservation_time } = reservationInfo;
+  if (reservation_date && reservation_time) {
+    const year = reservation_date.substring(0, 4);
+    const month = reservation_date.substring(5, 7);
+    const day = reservation_date.substring(8, 10);
+    const hour = reservation_time.substring(0, 2);
+    const minutes = reservation_time.substring(3, 5);
+
+    const date = new Date(year, month - 1, day, hour, minutes);
+    return date;
+  }
+  return undefined;
 }
