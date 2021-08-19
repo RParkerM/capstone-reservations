@@ -59,6 +59,12 @@ function isValidDate(req, res, next) {
   console.info("local time", getLocalTime());
   console.info("now", reso_date);
 
+  const openTime = new Date(year, month - 1, day, 10, 30);
+  const closeTime = new Date(year, month - 1, day, 21, 30);
+
+  openTime.setMinutes(openTime.getMinutes() - openTime.getTimezoneOffset());
+  closeTime.setMinutes(closeTime.getMinutes() - closeTime.getTimezoneOffset());
+
   if (reso_date < getLocalTime()) {
     return next({
       status: 400,
@@ -70,6 +76,19 @@ function isValidDate(req, res, next) {
     return next({
       status: 400,
       message: `Reservation cannot fall on a Tuesday, when restaurant is closed. Received date ${year}-${month}.`,
+    });
+  }
+
+  if (reso_date < openTime) {
+    return next({
+      status: 400,
+      message: `Cannot make reservation before 10:30 AM when restaurant opens. Received ${hour}:${minutes}.`,
+    });
+  }
+  if (reso_date > closeTime) {
+    return next({
+      status: 400,
+      message: `Cannot make reservation after 9:30PM as restaurant closes at 10. Received ${hour}:${minutes}.`,
     });
   }
 
