@@ -18,7 +18,8 @@ function NewReservation({ reservation = {}, handleSubmit = () => {} }) {
   const history = useHistory();
 
   const handleChange = ({ target }) => {
-    const { name, value } = target;
+    let { name, value } = target;
+    if (name == "people") value = parseInt(value);
     setReservationInfo({ ...reservationInfo, [name]: value });
   };
 

@@ -4,4 +4,10 @@ function getTodayYYYYMMdd() {
   return date.toISOString().slice(0, 10);
 }
 
-module.exports = { getTodayYYYYMMdd };
+function getLocalTime() {
+  const date = new Date();
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return date;
+}
+
+module.exports = { getTodayYYYYMMdd, getLocalTime };
