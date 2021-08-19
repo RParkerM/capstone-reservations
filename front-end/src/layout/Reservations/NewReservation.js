@@ -3,8 +3,8 @@ import "./NewReservation.css";
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 import { createReservation } from "../../utils/api";
-import { getDateFromReso } from "../../utils/date-time";
 import ErrorAlert from "../ErrorAlert";
+import { getValidationErrors } from "../../validation/reservations";
 
 /**
  * Defines the component for creating a new reservation
@@ -24,19 +24,7 @@ function NewReservation({ reservation = {}, handleSubmit = () => {} }) {
   };
 
   const isValidReservation = (reservationInfo) => {
-    if (!reservationInfo.reservation_date || !reservationInfo.reservation_time)
-      return false;
-    const now = new Date();
-    const reso_date = getDateFromReso(reservationInfo);
-    let errorMessages = [];
-    if (reso_date < now) {
-      errorMessages.push("Cannot make reservations in the past.");
-    }
-    if (reso_date.getDay() == 2) {
-      errorMessages.push(
-        "Cannot make reservations on Tuesday. Restaurant is closed."
-      );
-    }
+    const errorMessages = getValidationErrors(reservationInfo);
     if (errorMessages.length > 0) {
       setErrors({ message: errorMessages.join("\n") });
       return false;
@@ -46,7 +34,6 @@ function NewReservation({ reservation = {}, handleSubmit = () => {} }) {
     return true;
   };
 
-  ///TODO REFACTOR ALL VALIDATION FROM THIS WIDGET
   const submit = async (event) => {
     const abortController = new AbortController();
 
