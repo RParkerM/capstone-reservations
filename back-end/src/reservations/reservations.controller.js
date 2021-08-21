@@ -147,7 +147,7 @@ function hasRequiredProperties(req, res, next) {
 }
 
 async function reservationExists(req, res, next) {
-  const { reservationId } = req.params;
+  const { reservationId } = res.locals.reservationId ? res.locals : req.params;
   if (reservationId === undefined)
     next({ status: 500, message: "Internal error. Reservation id is missing" });
   const reservation = await service.read(reservationId);
@@ -190,4 +190,5 @@ module.exports = {
     asyncErrorBoundary(create),
   ],
   read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
+  reservationExists,
 };

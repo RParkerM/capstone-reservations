@@ -7,7 +7,7 @@ function list() {
 }
 
 function read(table_id) {
-  console.log("reading in service");
+  // console.log("reading in service");
   return knex(`${TABLE}`).select("*").where({ table_id }).first();
 }
 
@@ -18,4 +18,12 @@ function create(table) {
     .then((createdRecords) => createdRecords[0]);
 }
 
-module.exports = { list, read, create };
+function update(updatedTable) {
+  return knex(`${TABLE}`)
+    .select("*")
+    .where({ table_id: updatedTable.table_id })
+    .update(updatedTable, "*")
+    .then((updatedRecords) => updatedRecords[0]);
+}
+
+module.exports = { list, read, create, update };
