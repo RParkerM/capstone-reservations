@@ -157,6 +157,7 @@ async function reservationExists(req, res, next) {
       message: `Reservation not found with id: ${reservationId}`,
     });
   res.locals.reservation = reservation;
+  next();
 }
 
 async function create(req, res, next) {
@@ -176,6 +177,7 @@ async function list(req, res) {
 }
 
 async function read(req, res) {
+  console.log(res.locals.reservation);
   res.json({ data: res.locals.reservation });
 }
 
