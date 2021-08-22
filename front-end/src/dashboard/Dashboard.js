@@ -35,7 +35,7 @@ function Dashboard({ date }) {
       </div>
       <ErrorAlert error={reservationsError} />
       <ReservationList reservations={reservations} />
-      <TableList tables={tables} />
+      <TableList tables={tables} handleErrors={setReservationsError} />
     </main>
   );
 }

@@ -8,9 +8,9 @@ import "./TableList.css";
  *  the tables to display.
  * @returns {JSX.Element}
  */
-function TableList({ tables }) {
+function TableList({ tables, handleErrors }) {
   const table_list = tables.map((table, index) => (
-    <TableCard table={table} key={index} />
+    <TableCard table={table} key={index} handleErrors={handleErrors} />
   ));
 
   return <div className='table-list'>{table_list}</div>;

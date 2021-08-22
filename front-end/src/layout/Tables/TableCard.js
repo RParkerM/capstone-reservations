@@ -1,4 +1,6 @@
 import React from "react";
+import { useHistory } from "react-router";
+import { finishTable } from "../../utils/api";
 
 /**
  * Defines the table card component.
@@ -6,9 +8,37 @@ import React from "react";
  *  the table to display.
  * @returns {JSX.Element}
  */
-function TableCard({ table }) {
+function TableCard({ table, handleErrors }) {
+  const history = useHistory();
   const { table_name, table_id, capacity, reservation_id } = table;
+
+  const finish = async () => {
+    const abortController = new AbortController();
+    if (
+      !window.confirm(
+        "Is this table ready to seat new guests? This cannot be undone."
+      )
+    )
+      return;
+    try {
+      const table = await finishTable(table_id, abortController.signal);
+      console.debug(table);
+      history.push("/");
+    } catch (err) {
+      handleErrors(err);
+    }
+  };
+
   const occupiedStatus = reservation_id ? "Occupied" : "Free";
+  const finishButton = reservation_id ? (
+    <button
+      data-table-id-finish={table_id}
+      className='btn btn-primary'
+      onClick={finish}
+    >
+      Finish Table
+    </button>
+  ) : null;
 
   return (
     <div className='card' style={{ width: "18rem" }}>
@@ -19,6 +49,7 @@ function TableCard({ table }) {
           className='card-text'
           data-table-id-status={table_id}
         >{`${occupiedStatus}`}</p>
+        {finishButton}
       </div>
     </div>
   );
