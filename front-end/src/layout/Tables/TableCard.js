@@ -11,13 +11,15 @@ function TableCard({ table }) {
   const occupiedStatus = reservation_id ? "Occupied" : "Free";
 
   return (
-    <div className='card'>
+    <div className='card' style={{ width: "18rem" }}>
       <h5 className='card-title'>{`${table_name}`}</h5>
-      <p className='card-text'>{`Seats ${capacity}`}</p>
-      <p
-        className='card-text'
-        data-table-id-status={table_id}
-      >{`${occupiedStatus}`}</p>
+      <div className='card-body'>
+        <p className='card-text'>{`Seats ${capacity} guests`}</p>
+        <p
+          className='card-text'
+          data-table-id-status={table_id}
+        >{`${occupiedStatus}`}</p>
+      </div>
     </div>
   );
 }

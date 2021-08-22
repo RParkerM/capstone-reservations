@@ -1,0 +1,10 @@
+/* TODO: implement this in flex; */
+
+.table-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.table-list .card {
+  text-align: center;
+}

@@ -1,0 +1,8 @@
+.reservation-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.reservation-list .card {
+  text-align: center;
+}

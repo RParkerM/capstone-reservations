@@ -2,9 +2,9 @@ import "./NewTable.css";
 
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-// import { createTable } from "../../utils/api";
+import { createTable } from "../../utils/api";
 import ErrorAlert from "../ErrorAlert";
-// import { getValidationErrors } from "../../validation/tables";
+import { getValidationErrors } from "../../validation/tables";
 
 /**
  * Defines the component for creating a new table
@@ -19,14 +19,13 @@ function NewTable({ table = {}, handleSubmit = () => {} }) {
 
   const handleChange = ({ target }) => {
     let { name, value } = target;
-    if (name === "people") value = parseInt(value);
+    if (name === "capacity") value = parseInt(value);
     setTableInfo({ ...tableInfo, [name]: value });
   };
 
   const isValidTable = (tableInfo) => {
-    //TODO uncomment once getValidationErrors is implemented
-    const errorMessages = [];
-    //getValidationErrors(tableInfo);
+    console.log("validating ntable");
+    const errorMessages = getValidationErrors(tableInfo);
     if (errorMessages.length > 0) {
       setErrors({ message: errorMessages.join("\n") });
       return false;
@@ -43,8 +42,7 @@ function NewTable({ table = {}, handleSubmit = () => {} }) {
     console.log(tableInfo);
     if (isValidTable(tableInfo)) {
       try {
-        //TODO uncomment once createTable is implemeneted
-        // const table = await createTable(tableInfo, abortController.signal);
+        const table = await createTable(tableInfo, abortController.signal);
         console.debug(table);
         history.push("/dashboard");
       } catch (err) {

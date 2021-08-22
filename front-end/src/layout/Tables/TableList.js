@@ -1,5 +1,6 @@
 import React from "react";
 import TableCard from "./TableCard";
+import "./TableList.css";
 
 /**
  * Defines the table list component.
@@ -12,7 +13,7 @@ function TableList({ tables }) {
     <TableCard table={table} key={index} />
   ));
 
-  return table_list;
+  return <div className='table-list'>{table_list}</div>;
 }
 
 export default TableList;

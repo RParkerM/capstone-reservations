@@ -1,5 +1,6 @@
 import React from "react";
 import ReservationCard from "./ReservationCard";
+import "./ReservationList.css";
 
 /**
  * Defines the reservation list component.
@@ -12,7 +13,7 @@ function ReservationList({ reservations }) {
     <ReservationCard reservation={reservation} key={index} />
   ));
 
-  return reservation_list;
+  return <div className='reservation-list'>{reservation_list}</div>;
 }
 
 export default ReservationList;
