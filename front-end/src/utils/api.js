@@ -125,3 +125,14 @@ export async function seatTable(tableId, reservation_id, signal) {
   const table_returned = await fetchJson(url, options, {});
   return table_returned;
 }
+
+export async function finishTable(tableId, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
+  const options = {
+    method: "DELETE",
+    headers,
+    signal,
+  };
+  const table_returned = await fetchJson(url, options, {});
+  return table_returned;
+}
