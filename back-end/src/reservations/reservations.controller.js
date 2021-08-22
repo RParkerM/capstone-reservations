@@ -149,6 +149,8 @@ async function reservationExists(req, res, next) {
   const { reservationId } = res.locals.reservationId ? res.locals : req.params;
   if (reservationId === undefined)
     next({ status: 500, message: "Internal error. Reservation id is missing" });
+  if (isNaN(reservationId))
+    next({ status: 400, message: "Reservation id must be a number." });
   const reservation = await service.read(reservationId);
   if (!reservation)
     return next({
