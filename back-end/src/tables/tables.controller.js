@@ -132,7 +132,7 @@ async function finishTable(req, res) {
   const { table_id } = res.locals.table;
   const table = await service.finish(table_id);
   console.debug(table);
-  res.sendStatus(200);
+  res.status(200).json({ table });
 }
 
 /**
