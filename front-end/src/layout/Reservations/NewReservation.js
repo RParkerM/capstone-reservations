@@ -130,7 +130,12 @@ function NewReservation({ reservation = {}, handleSubmit = () => {} }) {
         <button type='submit' className='btn btn-primary m-2'>
           Submit
         </button>
-        <button onClick={handleCancel} className='btn btn-danger m-2'>
+
+        <button
+          onClick={handleCancel}
+          type='button'
+          className='btn btn-danger m-2'
+        >
           Cancel
         </button>
       </form>
