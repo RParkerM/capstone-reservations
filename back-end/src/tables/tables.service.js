@@ -26,4 +26,12 @@ function update(updatedTable) {
     .then((updatedRecords) => updatedRecords[0]);
 }
 
-module.exports = { list, read, create, update };
+function finish(table_id) {
+  return knex(`${TABLE}`)
+    .select("*")
+    .where({ table_id })
+    .update({ reservation_id: null }, "*")
+    .then((updatedRecords) => updatedRecords[0]);
+}
+
+module.exports = { list, read, create, update, finish };

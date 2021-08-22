@@ -16,6 +16,10 @@ router
 
 router.route("/:tableId").get(controller.read).all(methodNotAllowed);
 
-router.route("/:tableId/seat").put(controller.seat).all(methodNotAllowed);
+router
+  .route("/:tableId/seat")
+  .put(controller.seat)
+  .delete(controller.finishTable)
+  .all(methodNotAllowed);
 
 module.exports = router;

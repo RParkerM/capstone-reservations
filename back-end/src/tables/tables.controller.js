@@ -3,6 +3,7 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const {
   reservationExists,
 } = require("../reservations/reservations.controller");
+const { join } = require("../db/connection");
 
 const VALID_PROPERTIES = ["capacity", "table_name"];
 
@@ -113,6 +114,24 @@ async function create(req, res, next) {
     next({ status: 500, message: e });
   }
 }
+
+function tableIsOccupied(req, res, next) {
+  const { reservation_id, table_name } = res.locals.table;
+  if (!reservation_id)
+    return next({
+      status: "400",
+      message: `Table ${table_name} is not occupied`,
+    });
+  next();
+}
+
+async function finishTable(req, res) {
+  const { table_id } = res.locals.table;
+  const table = await service.finish(table_id);
+  console.debug(table);
+  res.sendStatus(200);
+}
+
 /**
  * List handler for table resources
  */
@@ -148,5 +167,10 @@ module.exports = {
     asyncErrorBoundary(reservationExists),
     tableHasCapacityAndAvailability,
     asyncErrorBoundary(seat),
+  ],
+  finishTable: [
+    asyncErrorBoundary(tableExists),
+    tableIsOccupied,
+    asyncErrorBoundary(finishTable),
   ],
 };
