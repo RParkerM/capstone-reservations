@@ -98,7 +98,7 @@ export async function createReservation(reservation, signal) {
     body: JSON.stringify({ data: reservation }),
     signal,
   };
-  return await fetchJson(url, options, {});
+  return await fetchJson(url, options, []);
 }
 
 export async function createTable(table, signal) {
@@ -109,7 +109,7 @@ export async function createTable(table, signal) {
     body: JSON.stringify({ data: table }),
     signal,
   };
-  const table_returned = await fetchJson(url, options, {});
+  const table_returned = await fetchJson(url, options, []);
   return table_returned;
 }
 
@@ -122,7 +122,7 @@ export async function seatTable(tableId, reservation_id, signal) {
     signal,
   };
   console.log(options);
-  const table_returned = await fetchJson(url, options, {});
+  const table_returned = await fetchJson(url, options, []);
   return table_returned;
 }
 
@@ -131,8 +131,9 @@ export async function finishTable(tableId, signal) {
   const options = {
     method: "DELETE",
     headers,
+    body: JSON.stringify({}),
     signal,
   };
-  const table_returned = await fetchJson(url, options, {});
+  const table_returned = await fetchJson(url, options, []);
   return table_returned;
 }
