@@ -5,7 +5,7 @@ const {
 } = require("../reservations/reservations.controller");
 const { join } = require("../db/connection");
 
-const VALID_PROPERTIES = ["capacity", "table_name"];
+const VALID_PROPERTIES = ["capacity", "table_name", "reservation_id"];
 
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
@@ -107,8 +107,11 @@ async function tableExists(req, res, next) {
 }
 
 async function create(req, res, next) {
+  const { data } = req.body;
+  if (!data.reservation_id) data.reservation_id = null;
+  console.log(data);
   try {
-    const table = await service.create(req.body.data);
+    const table = await service.create(data);
     res.status(201).json({ data: table });
   } catch (e) {
     next({ status: 500, message: e });
