@@ -27,6 +27,13 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
 
+  function refreshTables() {
+    const abortController = new AbortController();
+    listTables({}, abortController.signal)
+      .then(setTables)
+      .catch(setReservationsError);
+  }
+
   return (
     <main>
       <h1>Dashboard</h1>
@@ -35,7 +42,11 @@ function Dashboard({ date }) {
       </div>
       <ErrorAlert error={reservationsError} />
       <ReservationList reservations={reservations} />
-      <TableList tables={tables} handleErrors={setReservationsError} />
+      <TableList
+        tables={tables}
+        refreshTables={refreshTables}
+        handleErrors={setReservationsError}
+      />
     </main>
   );
 }

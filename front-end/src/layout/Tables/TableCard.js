@@ -8,7 +8,7 @@ import { finishTable } from "../../utils/api";
  *  the table to display.
  * @returns {JSX.Element}
  */
-function TableCard({ table, handleErrors }) {
+function TableCard({ table, handleErrors, refreshTables }) {
   const history = useHistory();
   const { table_name, table_id, capacity, reservation_id } = table;
 
@@ -23,8 +23,9 @@ function TableCard({ table, handleErrors }) {
     try {
       const table = await finishTable(table_id, abortController.signal);
       console.debug(table);
-      history.push("/");
+      refreshTables();
     } catch (err) {
+      console.log("in finish table", err);
       handleErrors(err);
     }
   };

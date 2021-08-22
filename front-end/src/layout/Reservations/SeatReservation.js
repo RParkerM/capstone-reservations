@@ -14,7 +14,7 @@ function SeatReservation() {
   const [reservation, setReservation] = useState([]);
   const [errors, setErrors] = useState(null);
   const { reservationId } = useParams();
-  const [tableId, setTableId] = useState([""]);
+  const [tableId, setTableId] = useState("");
 
   useEffect(loadInformation, [reservationId]);
 
@@ -39,8 +39,9 @@ function SeatReservation() {
     console.log(event.target.value);
   }
 
-  const submit = (event) => {
+  function submit(event) {
     event.preventDefault();
+    console.log("submitting");
     setErrors(null);
     if (tableId === "") {
       setErrors("Please select a table.");
@@ -49,9 +50,10 @@ function SeatReservation() {
     } else {
       SeatReservationAtTable();
     }
-  };
+  }
 
   const SeatReservationAtTable = async () => {
+    console.log("seating table...");
     const abortController = new AbortController();
     setErrors(null);
     try {
@@ -99,12 +101,16 @@ function SeatReservation() {
         <button type='submit' className='btn btn-primary m-2'>
           Submit
         </button>
-        <button onClick={handleCancel} className='btn btn-danger m-2'>
+        <button
+          type='button'
+          onClick={handleCancel}
+          className='btn btn-danger m-2'
+        >
           Cancel
         </button>
-        {JSON.stringify(tables)}
+        {/* {JSON.stringify(tables)}
         <p>Reservation follows:</p>
-        {JSON.stringify(reservation)}
+        {JSON.stringify(reservation)} */}
       </form>
     </>
   );
