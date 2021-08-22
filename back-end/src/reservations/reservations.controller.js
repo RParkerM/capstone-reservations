@@ -43,7 +43,6 @@ function hasValidDateQuery(req, res, next) {
 }
 
 function isValidDate(req, res, next) {
-  console.log("is it previous? IDK");
   const { reservation_date, reservation_time } = req.body.data;
   const year = reservation_date.substring(0, 4);
   const month = reservation_date.substring(5, 7);
