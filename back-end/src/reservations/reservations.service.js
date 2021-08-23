@@ -20,4 +20,12 @@ function create(reservation) {
     .then((createdRecords) => createdRecords[0]);
 }
 
-module.exports = { list, read, create };
+function update(updatedReservation) {
+  return knex(`${TABLE}`)
+    .select("*")
+    .where({ reservation_id: updatedReservation.reservation_id })
+    .update(updatedReservation, "*")
+    .then((updatedRecords) => updatedRecords[0]);
+}
+
+module.exports = { list, read, create, update };
