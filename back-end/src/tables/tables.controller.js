@@ -164,7 +164,7 @@ async function seat(req, res) {
 }
 
 async function finishTable(req, res) {
-  const { table_id } = res.locals.table;
+  const { table_id, reservation_id } = res.locals.table;
   const table = await service.finish(table_id);
   console.debug(table);
   const reservation = await service.modifyReservationStatus(
