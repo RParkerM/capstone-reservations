@@ -151,7 +151,7 @@ function hasValidStatusForBooking(req, res, next) {
   if (status && status != "booked")
     return next({
       status: 400,
-      message: "Cannot create a reservation with a status other than booked.",
+      message: `Cannot create a reservation with a status other than booked. Received ${status}`,
     });
   next();
 }
@@ -219,7 +219,7 @@ async function updateStatus(req, res) {
   const updatedReservation = { ...res.locals.reservation, status };
   console.debug("update reservation status", updatedReservation);
   const data = await service.update(updatedReservation);
-  res.status(201).json({ data });
+  res.status(200).json({ data });
 }
 
 module.exports = {
