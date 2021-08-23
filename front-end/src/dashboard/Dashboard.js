@@ -18,17 +18,6 @@ function Dashboard({ date }) {
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
-    return refreshTables();
-    // const abortController = new AbortController();
-    // setReservationsError(null);
-    // listReservations({ date }, abortController.signal)
-    //   .then(setReservations)
-    //   .catch(setReservationsError);
-    // listTables({}, abortController.signal).then(setTables);
-    // return () => abortController.abort();
-  }
-
-  function refreshTables() {
     const abortController = new AbortController();
     setReservationsError(null);
 
@@ -45,7 +34,16 @@ function Dashboard({ date }) {
       .then(setTables)
       .catch(setReservationsError);
     return () => abortController.abort();
+    // const abortController = new AbortController();
+    // setReservationsError(null);
+    // listReservations({ date }, abortController.signal)
+    //   .then(setReservations)
+    //   .catch(setReservationsError);
+    // listTables({}, abortController.signal).then(setTables);
+    // return () => abortController.abort();
   }
+
+  function refreshTables() {}
 
   return (
     <main>
