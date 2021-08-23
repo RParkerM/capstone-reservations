@@ -18,20 +18,33 @@ function Dashboard({ date }) {
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
-    const abortController = new AbortController();
-    setReservationsError(null);
-    listReservations({ date }, abortController.signal)
-      .then(setReservations)
-      .catch(setReservationsError);
-    listTables({}, abortController.signal).then(setTables);
-    return () => abortController.abort();
+    return refreshTables();
+    // const abortController = new AbortController();
+    // setReservationsError(null);
+    // listReservations({ date }, abortController.signal)
+    //   .then(setReservations)
+    //   .catch(setReservationsError);
+    // listTables({}, abortController.signal).then(setTables);
+    // return () => abortController.abort();
   }
 
   function refreshTables() {
     const abortController = new AbortController();
+    setReservationsError(null);
+
+    Promise.all([
+      listTables({}, abortController.signal),
+      listReservations({ date }, abortController.signal),
+    ])
+      .then((results) => {
+        setTables(results[0]);
+        setReservations(results[1]);
+      })
+      .catch((errors) => setReservationsError);
     listTables({}, abortController.signal)
       .then(setTables)
       .catch(setReservationsError);
+    return () => abortController.abort();
   }
 
   return (

@@ -33,6 +33,7 @@ function ReservationCard({ reservation }) {
       <div className='card-body'>
         <h5 className='card-title'>{`${first_name} ${last_name}`}</h5>
         <p className='card-text'>{`${reservation_time}`}</p>
+        <p data-reservation-id-status={reservation_id}>{status}</p>
         {SeatButton}
       </div>
     </div>
