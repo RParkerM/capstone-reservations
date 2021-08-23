@@ -103,7 +103,13 @@ function returnFakeResoData(params = {}) {
   const { mobile_number, date } = params;
   console.log(fakeReservationData);
   console.log(JSON.stringify(params));
-  return fakeReservationData;
+  return fakeReservationData.map((reservation, index) => {
+    return {
+      ...reservation,
+      status: "booked",
+      reservation_id: index + 1,
+    };
+  });
 }
 function returnFakeTableData(params = {}) {
   return fakeTableData;
