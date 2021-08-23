@@ -206,7 +206,10 @@ async function create(req, res, next) {
  */
 async function list(req, res) {
   const data = await service.list(res.locals.date);
-  res.status(200).json({ data });
+  const unfinishedReservations = data.filter(
+    (reservation) => reservation.status != "finished"
+  );
+  res.status(200).json({ data: unfinishedReservations });
 }
 
 async function read(req, res) {
