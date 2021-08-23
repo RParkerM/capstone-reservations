@@ -15,19 +15,25 @@ function ReservationCard({ reservation }) {
     // reservation_date,
     reservation_time,
     reservation_id,
+    status,
   } = reservation;
+
+  const SeatButton =
+    status == "booked" ? (
+      <Link
+        to={`/reservations/${reservation_id}/seat`}
+        className='btn btn-primary'
+      >
+        Seat
+      </Link>
+    ) : null;
 
   return (
     <div className='card' style={{ width: "18rem" }}>
       <div className='card-body'>
         <h5 className='card-title'>{`${first_name} ${last_name}`}</h5>
         <p className='card-text'>{`${reservation_time}`}</p>
-        <Link
-          to={`/reservations/${reservation_id}/seat`}
-          className='btn btn-primary'
-        >
-          Seat
-        </Link>
+        {SeatButton}
       </div>
     </div>
   );
