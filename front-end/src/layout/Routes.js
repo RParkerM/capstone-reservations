@@ -7,6 +7,7 @@ import NewReservation from "./Reservations/NewReservation";
 import NewTable from "./Tables/NewTable";
 import SeatReservation from "./Reservations/SeatReservation";
 import { today } from "../utils/date-time";
+import SearchReservations from "./Reservations/Search";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -37,6 +38,9 @@ function Routes() {
       </Route>
       <Route exact={true} path='/reservations'>
         <Redirect to={"/dashboard"} />
+      </Route>
+      <Route exact={true} path='/search'>
+        <SearchReservations />
       </Route>
       <Route path='/dashboard'>
         <Dashboard date={query.get("date") || today()} />
