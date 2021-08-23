@@ -28,12 +28,32 @@ function ReservationCard({ reservation }) {
       </Link>
     ) : null;
 
+  console.log(reservation);
+  function onClickCancelReservation(event) {
+    //TODO: implement cancel reso
+  }
+
   return (
     <div className='card' style={{ width: "18rem" }}>
       <div className='card-body'>
         <h5 className='card-title'>{`${first_name} ${last_name}`}</h5>
         <p className='card-text'>{`${reservation_time}`}</p>
         <p data-reservation-id-status={reservation_id}>{status}</p>
+        <Link
+          className={"btn btn-secondary"}
+          to={`/reservations/${reservation_id}/edit`}
+        >
+          Edit
+          <i className='bi bi-pencil-square'></i>
+        </Link>
+        <button
+          type='button'
+          className={"btn btn-danger"}
+          onClick={onClickCancelReservation}
+          data-reservation-id-cancel={reservation_id}
+        >
+          Cancel
+        </button>
         {SeatButton}
       </div>
     </div>
