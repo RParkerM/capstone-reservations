@@ -1,6 +1,7 @@
 const knex = require("../db/connection");
 
 const TABLE = "tables";
+const RES_TABLE = "reservations";
 
 function list() {
   return knex(`${TABLE}`).select("*").orderBy("table_name");
@@ -34,4 +35,19 @@ function finish(table_id) {
     .then((updatedRecords) => updatedRecords[0]);
 }
 
-module.exports = { list, read, create, update, finish };
+function modifyReservationStatus(reservation_id, status) {
+  return knex(`${RES_TABLE}`)
+    .select("*")
+    .where({ reservation_id })
+    .update({ status }, "*")
+    .then((updatedRecords) => updatedRecords[0]);
+}
+
+module.exports = {
+  list,
+  read,
+  create,
+  update,
+  finish,
+  modifyReservationStatus,
+};

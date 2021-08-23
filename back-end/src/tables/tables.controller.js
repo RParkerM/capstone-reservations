@@ -87,6 +87,16 @@ function tableHasCapacityAndAvailability(req, res, next) {
   next();
 }
 
+function canSeatReservation(req, res, next) {
+  const { status } = res.locals.reservation;
+  if (status !== "booked")
+    return next({
+      status: 400,
+      message: `Cannot seat a reservation which is not booked. Status of reservation ${status}`,
+    });
+  next();
+}
+
 async function tableExists(req, res, next) {
   // console.log("tableExists");
   const { tableId } = req.params;
@@ -128,13 +138,6 @@ function tableIsOccupied(req, res, next) {
   next();
 }
 
-async function finishTable(req, res) {
-  const { table_id } = res.locals.table;
-  const table = await service.finish(table_id);
-  console.debug(table);
-  res.status(200).json({ table });
-}
-
 /**
  * List handler for table resources
  */
@@ -153,7 +156,22 @@ async function seat(req, res) {
   const updatedTable = { ...res.locals.table, reservation_id };
   console.log(updatedTable);
   const data = await service.update(updatedTable);
+  const reservation = await service.modifyReservationStatus(
+    reservation_id,
+    "seated"
+  );
   res.status(200).json({ data });
+}
+
+async function finishTable(req, res) {
+  const { table_id } = res.locals.table;
+  const table = await service.finish(table_id);
+  console.debug(table);
+  const reservation = await service.modifyReservationStatus(
+    reservation_id,
+    "finished"
+  );
+  res.status(200).json({ table });
 }
 
 module.exports = {
@@ -168,6 +186,7 @@ module.exports = {
     asyncErrorBoundary(tableExists),
     hasRequiredPropertiesForSeating,
     asyncErrorBoundary(reservationExists),
+    canSeatReservation,
     tableHasCapacityAndAvailability,
     asyncErrorBoundary(seat),
   ],
