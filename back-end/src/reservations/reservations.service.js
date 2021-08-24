@@ -28,4 +28,13 @@ function update(updatedReservation) {
     .then((updatedRecords) => updatedRecords[0]);
 }
 
-module.exports = { list, read, create, update };
+function search(mobile_number) {
+  return knex(`${TABLE}`)
+    .whereRaw(
+      "translate(mobile_number, '() -', '') like ?",
+      `%${mobile_number.replace(/\D/g, "")}%`
+    )
+    .orderBy("reservation_date");
+}
+
+module.exports = { list, read, create, update, search };

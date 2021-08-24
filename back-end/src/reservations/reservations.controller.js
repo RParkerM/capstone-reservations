@@ -33,7 +33,21 @@ function hasOnlyValidProperties(req, res, next) {
  * Validates query parameter date matches YYYY-MM-DD format
  */
 function hasValidDateQuery(req, res, next) {
-  let reso_date = req.query.date ? req.query.date : getToday();
+  ///TODO: change this to hasValidDateOrTime - check for valid query or time
+  const { date, mobile_number } = req.query;
+  if (!date && !mobile_number)
+    return next({
+      status: 400,
+      message:
+        "Missing required properties. Must include date or mobile_number.",
+    });
+  //Will list reservations by mobile number if included
+  //This implementation will ignore date if mobile_number is included
+  if (mobile_number) {
+    res.locals.mobile_number = mobile_number;
+    return next();
+  }
+  let reso_date = date ? date : getToday();
   if (!isYYYYMMDD(reso_date))
     return next({
       status: 400,
@@ -205,11 +219,16 @@ async function create(req, res, next) {
  * List handler for reservation resources
  */
 async function list(req, res) {
-  const data = await service.list(res.locals.date);
-  const unfinishedReservations = data.filter(
-    (reservation) => reservation.status != "finished"
-  );
-  res.status(200).json({ data: unfinishedReservations });
+  if (res.locals.mobile_number) {
+    const data = await service.search(res.locals.mobile_number);
+    res.status(200).json({ data });
+  } else {
+    const data = await service.list(res.locals.date);
+    const unfinishedReservations = data.filter(
+      (reservation) => reservation.status != "finished"
+    );
+    res.status(200).json({ data: unfinishedReservations });
+  }
 }
 
 async function read(req, res) {
