@@ -1,9 +1,13 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
-const { isYYYYMMDD, is24HrTime } = require("../utils/validation");
+const {
+  isYYYYMMDD,
+  is24HrTime,
+  hasValidDateForReserving,
+  hasValidPropertiesForReserving,
+} = require("../utils/validation");
 const getToday = require("../utils/time").getTodayYYYYMMdd;
-const { getLocalTime, isTuesday } = require("../utils/time");
 
 const VALID_PROPERTIES = [
   "first_name",
@@ -29,6 +33,34 @@ function hasOnlyValidProperties(req, res, next) {
   next();
 }
 
+function hasValidPropertiesForUpdating(req, res, next) {
+  const updatedReservation = { ...req.body.data };
+  delete updatedReservation.reservation_id;
+  delete updatedReservation.created_at;
+  delete updatedReservation.updated_at;
+  const invalidFields = Object.keys(updatedReservation).filter(
+    (field) => !VALID_PROPERTIES.includes(field)
+  );
+  if (invalidFields.length) {
+    return next({
+      status: 400,
+      message: `Invalid field(s): ${invalidFields.join(", ")}`,
+    });
+  }
+  const validatedReservation =
+    hasValidPropertiesForReserving(updatedReservation);
+  if (!validatedReservation.isValid)
+    return next({
+      status: 400,
+      message: validatedReservation.message,
+    });
+  res.locals.reservation = {
+    ...updatedReservation,
+    reservation_id: res.locals.reservation.reservation_id,
+  };
+  next();
+}
+
 /**
  * Validates query parameter date matches YYYY-MM-DD format
  */
@@ -41,6 +73,7 @@ function hasValidDateQuery(req, res, next) {
       message:
         "Missing required properties. Must include date or mobile_number.",
     });
+
   //Will list reservations by mobile number if included
   //This implementation will ignore date if mobile_number is included
   if (mobile_number) {
@@ -58,52 +91,9 @@ function hasValidDateQuery(req, res, next) {
 }
 
 function isValidDate(req, res, next) {
-  const { reservation_date, reservation_time } = req.body.data;
-  const year = reservation_date.substring(0, 4);
-  const month = reservation_date.substring(5, 7);
-  const day = reservation_date.substring(8, 10);
-  const hour = reservation_time.substring(0, 2);
-  const minutes = reservation_time.substring(3, 5);
-
-  console.info(`${year}-${month}-${day}`);
-
-  const reso_date = new Date(year, month - 1, day, hour, minutes);
-  reso_date.setMinutes(reso_date.getMinutes() - reso_date.getTimezoneOffset());
-
-  console.info("local time", getLocalTime());
-  console.info("now", reso_date);
-
-  const openTime = new Date(year, month - 1, day, 10, 30);
-  const closeTime = new Date(year, month - 1, day, 21, 30);
-
-  openTime.setMinutes(openTime.getMinutes() - openTime.getTimezoneOffset());
-  closeTime.setMinutes(closeTime.getMinutes() - closeTime.getTimezoneOffset());
-
-  if (reso_date < getLocalTime()) {
-    return next({
-      status: 400,
-      message: `Reservation date must be in the future. Received ${year}-${month}-${day} ${hour}:${minutes}`,
-    });
-  }
-
-  if (isTuesday(reso_date)) {
-    return next({
-      status: 400,
-      message: `Reservation cannot fall on a Tuesday, when restaurant is closed. Received date ${year}-${month}.`,
-    });
-  }
-
-  if (reso_date < openTime) {
-    return next({
-      status: 400,
-      message: `Cannot make reservation before 10:30 AM when restaurant opens. Received ${hour}:${minutes}.`,
-    });
-  }
-  if (reso_date > closeTime) {
-    return next({
-      status: 400,
-      message: `Cannot make reservation after 9:30PM as restaurant closes at 10. Received ${hour}:${minutes}.`,
-    });
+  const validatedDate = hasValidDateForReserving(req.body.data);
+  if (!validatedDate.isValid) {
+    return next({ status: 400, message: validatedDate.message });
   }
 
   next();
@@ -116,46 +106,10 @@ function hasRequiredProperties(req, res, next) {
       status: 400,
       message: "Required reservation data is missing.",
     });
-  const {
-    first_name,
-    last_name,
-    mobile_number,
-    reservation_date,
-    reservation_time,
-    people,
-  } = data;
-  if (!first_name)
-    return next({
-      status: 400,
-      message: "Required property first_name is missing",
-    });
-  if (!last_name)
-    return next({
-      status: 400,
-      message: "Required property last_name is missing",
-    });
-  if (!mobile_number)
-    return next({
-      status: 400,
-      message: "Required property mobile_number is missing",
-    });
-  if (!reservation_date || !isYYYYMMDD(reservation_date))
-    return next({
-      status: 400,
-      message:
-        "Required property reservation_date is missing or invalid. Required format: YYYY-MM-DD.",
-    });
-  if (!reservation_time || !is24HrTime(reservation_time))
-    return next({
-      status: 400,
-      message: `Required property reservation_time is missing or invalid. Required 24 hour format: HH:SS. Received ${reservation_time}`,
-    });
-  if (typeof people !== "number" || isNaN(people) || !people) {
-    return next({
-      status: 400,
-      message:
-        "Required property people is missing or zero. Must be a number greater than zero.",
-    });
+
+  const validatedReservation = hasValidPropertiesForReserving(req.body.data);
+  if (!validatedReservation.isValid) {
+    return next({ status: 400, message: validatedReservation.message });
   }
   next();
 }
@@ -178,7 +132,7 @@ function hasValidStatusForUpdating(req, res, next) {
       message: "Cannot update a reservation which has already finished.",
     });
 
-  const validStatuses = ["booked", "seated", "finished"];
+  const validStatuses = ["booked", "seated", "finished", "cancelled"];
   const { status } = req.body.data;
   if (!validStatuses.includes(status)) {
     return next({
@@ -244,6 +198,11 @@ async function updateStatus(req, res) {
   res.status(200).json({ data });
 }
 
+async function update(req, res) {
+  const data = await service.update({ ...res.locals.reservation });
+  res.status(200).json({ data });
+}
+
 module.exports = {
   list: [hasValidDateQuery, asyncErrorBoundary(list)],
   create: [
@@ -255,6 +214,11 @@ module.exports = {
   ],
   read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
   reservationExists,
+  update: [
+    asyncErrorBoundary(reservationExists),
+    hasValidPropertiesForUpdating,
+    asyncErrorBoundary(update),
+  ],
   updateStatus: [
     asyncErrorBoundary(reservationExists),
     hasOnlyValidProperties,
