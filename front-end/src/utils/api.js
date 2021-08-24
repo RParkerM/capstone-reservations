@@ -64,7 +64,7 @@ async function fetchJson(url, options, onCancel) {
 
 export async function listReservations(params, signal) {
   //TODO: Remove this
-  return returnFakeResoData(params);
+  // return returnFakeResoData(params);
 
   const url = new URL(`${API_BASE_URL}/reservations`);
   Object.entries(params).forEach(([key, value]) =>
@@ -92,7 +92,7 @@ export async function getReservation(reservationId, signal) {
 }
 
 export async function listTables(params, signal) {
-  return returnFakeTableData(params);
+  // return returnFakeTableData(params);
 
   const url = new URL(`${API_BASE_URL}/tables`);
   Object.entries(params).forEach(([key, value]) =>
