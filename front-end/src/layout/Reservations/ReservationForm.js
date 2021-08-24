@@ -15,7 +15,12 @@ function ReservationForm({
 }) {
   const [reservationInfo, setReservationInfo] = useState(reservation);
 
-  useEffect(() => setReservationInfo(reservation), [reservation]);
+  useEffect(() => {
+    if (reservation?.first_name) {
+      setReservationInfo(reservation);
+    }
+  }, [reservation]);
+
   const handleChange = ({ target }) => {
     let { name, value } = target;
     if (name === "people") value = parseInt(value);
