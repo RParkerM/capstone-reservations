@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listReservations, listTables } from "../utils/api";
+import { cancelReservation, listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import ReservationList from "../layout/Reservations/ReservationList";
 import TableList from "../layout/Tables/TableList";
@@ -43,7 +43,14 @@ function Dashboard({ date }) {
     // return () => abortController.abort();
   }
 
-  function refreshTables() {}
+  function handleCancelReservation(reservation_id) {
+    const abortController = new AbortController();
+    setReservationsError(null);
+
+    cancelReservation(reservation_id, abortController.signal)
+      .then(loadDashboard)
+      .catch(setReservationsError);
+  }
 
   return (
     <main>
@@ -52,10 +59,13 @@ function Dashboard({ date }) {
         <h4 className='mb-0'>Reservations for date</h4>
       </div>
       <ErrorAlert error={reservationsError} />
-      <ReservationList reservations={reservations} />
+      <ReservationList
+        reservations={reservations}
+        handleCancelReservation={handleCancelReservation}
+      />
       <TableList
         tables={tables}
-        refreshTables={refreshTables}
+        refreshTables={loadDashboard}
         handleErrors={setReservationsError}
       />
     </main>

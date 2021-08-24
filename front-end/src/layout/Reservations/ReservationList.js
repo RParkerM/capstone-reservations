@@ -8,9 +8,13 @@ import "./ReservationList.css";
  *  the reservations to display.
  * @returns {JSX.Element}
  */
-function ReservationList({ reservations }) {
+function ReservationList({ reservations, handleCancelReservation }) {
   const reservation_list = reservations.map((reservation, index) => (
-    <ReservationCard reservation={reservation} key={index} />
+    <ReservationCard
+      reservation={reservation}
+      key={index}
+      handleCancelReservation={handleCancelReservation}
+    />
   ));
 
   return <div className='reservation-list'>{reservation_list}</div>;

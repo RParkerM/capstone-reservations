@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { listReservations } from "../../utils/api";
+import { listReservations, cancelReservation } from "../../utils/api";
 import ErrorAlert from "../ErrorAlert";
 import ReservationList from "./ReservationList";
 
@@ -21,6 +21,10 @@ function SearchReservations() {
 
   const submit = async (event) => {
     event.preventDefault();
+    beginSearch();
+  };
+
+  const beginSearch = async () => {
     try {
       const reservations = await listReservations({ mobile_number });
       console.debug(reservations);
@@ -30,9 +34,21 @@ function SearchReservations() {
     }
   };
 
+  function handleCancelReservation(reservation_id) {
+    const abortController = new AbortController();
+    setErrors(null);
+
+    cancelReservation(reservation_id, abortController.signal)
+      .then(beginSearch)
+      .catch(setErrors);
+  }
+
   const reservationList =
     reservations?.length > 0 ? (
-      <ReservationList reservations={reservations} />
+      <ReservationList
+        handleCancelReservation={handleCancelReservation}
+        reservations={reservations}
+      />
     ) : (
       <p>No reservations found.</p>
     );
