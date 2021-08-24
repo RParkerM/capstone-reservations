@@ -55,8 +55,7 @@ function EditReservation() {
       try {
         // const reservation =
         await editReservation(reservationInfo, abortController.signal);
-        // console.debug(reservation);
-        history.goBack();
+        history.push(`/dashboard?date=${reservationInfo.reservation_date}`);
       } catch (err) {
         setErrors(err);
       }
