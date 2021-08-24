@@ -4,7 +4,7 @@
  * @returns array
  */
 export function getValidationErrors(tableInfo) {
-  console.log("validating table", tableInfo);
+  // console.log("validating table", tableInfo);
   if (!tableInfo)
     throw new Error("Must pass table information to be validated.");
   const validationErrors = [];
@@ -15,6 +15,6 @@ export function getValidationErrors(tableInfo) {
     validationErrors.push("Please include the table's capacity.");
   if (isNaN(capacity) || capacity < 1)
     validationErrors.push("Table capacity must be a number greater than 0.");
-  console.log(validationErrors);
+  // console.log(validationErrors);
   return validationErrors;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listReservations, listTables } from "../utils/api";
+import { cancelReservation, listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import ReservationList from "../layout/Reservations/ReservationList";
 import TableList from "../layout/Tables/TableList";
@@ -18,17 +18,6 @@ function Dashboard({ date }) {
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
-    return refreshTables();
-    // const abortController = new AbortController();
-    // setReservationsError(null);
-    // listReservations({ date }, abortController.signal)
-    //   .then(setReservations)
-    //   .catch(setReservationsError);
-    // listTables({}, abortController.signal).then(setTables);
-    // return () => abortController.abort();
-  }
-
-  function refreshTables() {
     const abortController = new AbortController();
     setReservationsError(null);
 
@@ -45,19 +34,38 @@ function Dashboard({ date }) {
       .then(setTables)
       .catch(setReservationsError);
     return () => abortController.abort();
+    // const abortController = new AbortController();
+    // setReservationsError(null);
+    // listReservations({ date }, abortController.signal)
+    //   .then(setReservations)
+    //   .catch(setReservationsError);
+    // listTables({}, abortController.signal).then(setTables);
+    // return () => abortController.abort();
+  }
+
+  function handleCancelReservation(reservation_id) {
+    const abortController = new AbortController();
+    setReservationsError(null);
+
+    cancelReservation(reservation_id, abortController.signal)
+      .then(loadDashboard)
+      .catch(setReservationsError);
   }
 
   return (
     <main>
       <h1>Dashboard</h1>
       <div className='d-md-flex mb-3'>
-        <h4 className='mb-0'>Reservations for date</h4>
+        <h4 className='mb-0'>Reservations for date {date}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
-      <ReservationList reservations={reservations} />
+      <ReservationList
+        reservations={reservations}
+        handleCancelReservation={handleCancelReservation}
+      />
       <TableList
         tables={tables}
-        refreshTables={refreshTables}
+        refreshTables={loadDashboard}
         handleErrors={setReservationsError}
       />
     </main>

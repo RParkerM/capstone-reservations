@@ -26,13 +26,13 @@ function getDateAndTimeValidationErrors(reservationInfo) {
     21,
     30
   );
-  console.log(
-    "reso",
-    reso_date,
-    // "open", openTime,
-    "close",
-    closeTime
-  );
+  // console.log(
+  //   "reso",
+  //   reso_date,
+  //   // "open", openTime,
+  //   "close",
+  //   closeTime
+  // );
   if (reso_date < now) {
     errors.push("Cannot make reservations in the past.");
   }
@@ -91,7 +91,7 @@ function getMissingProperties(reservationInfo) {
 export function getValidationErrors(reservationInfo) {
   if (!reservationInfo)
     throw new Error("Must pass reservation information to be validated.");
-  console.log("lets validate");
+  // console.log("lets validate");
   let validationErrors = [];
   validationErrors = validationErrors.concat(
     getMissingProperties(reservationInfo)
@@ -99,6 +99,6 @@ export function getValidationErrors(reservationInfo) {
   validationErrors = validationErrors.concat(
     getDateAndTimeValidationErrors(reservationInfo)
   );
-  console.log(validationErrors);
+  // console.log(validationErrors);
   return validationErrors;
 }

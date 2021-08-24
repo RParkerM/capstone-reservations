@@ -59,11 +59,14 @@ async function fetchJson(url, options, onCancel) {
  */
 
 export async function listReservations(params, signal) {
+  //TODO: Remove this
+  // return returnFakeResoData(params);
+
   const url = new URL(`${API_BASE_URL}/reservations`);
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
   );
-  console.log(url);
+  // console.log(url);
 
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
@@ -77,7 +80,7 @@ export async function listReservations(params, signal) {
  */
 
 export async function getReservation(reservationId, signal) {
-  console.log("getting reso", reservationId);
+  // console.log("getting reso", reservationId);
   const url = new URL(`${API_BASE_URL}/reservations/${reservationId}`);
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
@@ -85,6 +88,8 @@ export async function getReservation(reservationId, signal) {
 }
 
 export async function listTables(params, signal) {
+  // return returnFakeTableData(params);
+
   const url = new URL(`${API_BASE_URL}/tables`);
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
@@ -101,6 +106,32 @@ export async function createReservation(reservation, signal) {
     signal,
   };
   return await fetchJson(url, options, []);
+}
+
+export async function cancelReservation(reservation_id, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}/status`);
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: { status: "cancelled" } }),
+    signal,
+  };
+  const reservation_returned = await fetchJson(url, options, []);
+  return reservation_returned;
+}
+
+export async function editReservation(reservation, signal) {
+  const url = new URL(
+    `${API_BASE_URL}/reservations/${reservation.reservation_id}`
+  );
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: reservation }),
+    signal,
+  };
+  const reservation_returned = await fetchJson(url, options, []);
+  return reservation_returned;
 }
 
 export async function createTable(table, signal) {
@@ -123,7 +154,7 @@ export async function seatTable(tableId, reservation_id, signal) {
     body: JSON.stringify({ data: { reservation_id } }),
     signal,
   };
-  console.log(options);
+  // console.log(options);
   const table_returned = await fetchJson(url, options, []);
   return table_returned;
 }
