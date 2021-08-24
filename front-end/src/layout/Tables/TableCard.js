@@ -1,5 +1,4 @@
 import React from "react";
-import { useHistory } from "react-router";
 import { finishTable } from "../../utils/api";
 
 /**
@@ -9,7 +8,6 @@ import { finishTable } from "../../utils/api";
  * @returns {JSX.Element}
  */
 function TableCard({ table, handleErrors, refreshTables }) {
-  const history = useHistory();
   const { table_name, table_id, capacity, reservation_id } = table;
 
   const finish = async () => {

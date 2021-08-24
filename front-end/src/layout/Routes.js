@@ -8,6 +8,7 @@ import NewTable from "./Tables/NewTable";
 import SeatReservation from "./Reservations/SeatReservation";
 import { today } from "../utils/date-time";
 import SearchReservations from "./Reservations/Search";
+import EditReservation from "./Reservations/EditReservation";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -29,6 +30,9 @@ function Routes() {
       </Route>
       <Route exact={true} path='/reservations/:reservationId/seat'>
         <SeatReservation />
+      </Route>
+      <Route exact={true} path='/reservations/:reservationId/edit'>
+        <EditReservation />
       </Route>
       <Route exact={true} path='/reservations/new'>
         <NewReservation />

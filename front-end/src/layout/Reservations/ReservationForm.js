@@ -1,6 +1,6 @@
 import "./ReservationForm.css";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 /**
  * Defines the component for creating/editing reservations
@@ -15,6 +15,7 @@ function ReservationForm({
 }) {
   const [reservationInfo, setReservationInfo] = useState(reservation);
 
+  useEffect(() => setReservationInfo(reservation), [reservation]);
   const handleChange = ({ target }) => {
     let { name, value } = target;
     if (name === "people") value = parseInt(value);
@@ -30,6 +31,8 @@ function ReservationForm({
     event.preventDefault();
     handleCancel();
   };
+
+  console.log(reservation);
 
   return (
     <form onSubmit={onClickSubmit}>

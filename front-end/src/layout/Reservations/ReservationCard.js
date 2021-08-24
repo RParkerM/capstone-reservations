@@ -19,7 +19,7 @@ function ReservationCard({ reservation, handleCancelReservation }) {
   } = reservation;
 
   const SeatButton =
-    status == "booked" ? (
+    status === "booked" ? (
       <Link
         to={`/reservations/${reservation_id}/seat`}
         className='btn btn-primary'
@@ -28,7 +28,7 @@ function ReservationCard({ reservation, handleCancelReservation }) {
       </Link>
     ) : null;
   const CancelButton =
-    status == "booked" ? (
+    status === "booked" ? (
       <button
         type='button'
         className={"btn btn-danger"}

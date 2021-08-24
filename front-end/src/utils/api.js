@@ -101,22 +101,6 @@ export async function listTables(params, signal) {
   return await fetchJson(url, { headers, signal }, []);
 }
 
-function returnFakeResoData(params = {}) {
-  const { mobile_number, date } = params;
-  console.log(fakeReservationData);
-  console.log(JSON.stringify(params));
-  return fakeReservationData.map((reservation, index) => {
-    return {
-      ...reservation,
-      status: "booked",
-      reservation_id: index + 1,
-    };
-  });
-}
-function returnFakeTableData(params = {}) {
-  return fakeTableData;
-}
-
 export async function createReservation(reservation, signal) {
   const url = new URL(`${API_BASE_URL}/reservations`);
   const options = {
@@ -134,6 +118,20 @@ export async function cancelReservation(reservation_id, signal) {
     method: "PUT",
     headers,
     body: JSON.stringify({ data: { status: "cancelled" } }),
+    signal,
+  };
+  const reservation_returned = await fetchJson(url, options, []);
+  return reservation_returned;
+}
+
+export async function editReservation(reservation, signal) {
+  const url = new URL(
+    `${API_BASE_URL}/reservations/${reservation.reservation_id}`
+  );
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: reservation }),
     signal,
   };
   const reservation_returned = await fetchJson(url, options, []);
