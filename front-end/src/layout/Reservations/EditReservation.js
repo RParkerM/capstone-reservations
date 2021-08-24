@@ -50,14 +50,12 @@ function EditReservation() {
   const submit = async (reservationInfo) => {
     const abortController = new AbortController();
 
-    console.log(reservationInfo);
+    // console.log(reservationInfo);
     if (isValidReservation(reservationInfo)) {
       try {
-        const reservation = await editReservation(
-          reservationInfo,
-          abortController.signal
-        );
-        console.debug(reservation);
+        // const reservation =
+        await editReservation(reservationInfo, abortController.signal);
+        // console.debug(reservation);
         history.goBack();
       } catch (err) {
         setErrors(err);

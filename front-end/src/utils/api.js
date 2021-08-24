@@ -5,10 +5,6 @@
 import formatReservationDate from "./format-reservation-date";
 import formatReservationTime from "./format-reservation-date";
 
-//TODO: remove these fake data
-const fakeReservationData = require("./fakeresodata.json");
-const fakeTableData = require("./faketabledata.json");
-
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
@@ -70,7 +66,7 @@ export async function listReservations(params, signal) {
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
   );
-  console.log(url);
+  // console.log(url);
 
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
@@ -84,7 +80,7 @@ export async function listReservations(params, signal) {
  */
 
 export async function getReservation(reservationId, signal) {
-  console.log("getting reso", reservationId);
+  // console.log("getting reso", reservationId);
   const url = new URL(`${API_BASE_URL}/reservations/${reservationId}`);
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
@@ -158,7 +154,7 @@ export async function seatTable(tableId, reservation_id, signal) {
     body: JSON.stringify({ data: { reservation_id } }),
     signal,
   };
-  console.log(options);
+  // console.log(options);
   const table_returned = await fetchJson(url, options, []);
   return table_returned;
 }

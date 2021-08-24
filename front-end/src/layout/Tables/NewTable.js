@@ -24,7 +24,7 @@ function NewTable({ table = {}, handleSubmit = () => {} }) {
   };
 
   const isValidTable = (tableInfo) => {
-    console.log("validating ntable");
+    // console.log("validating ntable");
     const errorMessages = getValidationErrors(tableInfo);
     if (errorMessages.length > 0) {
       setErrors({ message: errorMessages.join("\n") });
@@ -39,7 +39,7 @@ function NewTable({ table = {}, handleSubmit = () => {} }) {
     const abortController = new AbortController();
 
     event.preventDefault();
-    console.log(tableInfo);
+    // console.log(tableInfo);
     if (isValidTable(tableInfo)) {
       try {
         const table = await createTable(tableInfo, abortController.signal);

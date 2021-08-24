@@ -36,12 +36,12 @@ function SeatReservation() {
 
   function handleChange(event) {
     setTableId(event.target.value);
-    console.log(event.target.value);
+    // console.log(event.target.value);
   }
 
   function submit(event) {
     event.preventDefault();
-    console.log("submitting");
+    // console.log("submitting");
     setErrors(null);
     if (tableId === "") {
       setErrors("Please select a table.");
@@ -53,7 +53,7 @@ function SeatReservation() {
   }
 
   const SeatReservationAtTable = async () => {
-    console.log("seating table...");
+    // console.log("seating table...");
     const abortController = new AbortController();
     setErrors(null);
     try {
@@ -87,6 +87,7 @@ function SeatReservation() {
     <>
       <ErrorAlert error={errors} />
       <form onSubmit={submit}>
+        <label>{`${reservation.first_name} ${reservation.last_name}`}</label>
         <label htmlFor='table_id'>Seat at table:</label>
         <select
           className='form-control'

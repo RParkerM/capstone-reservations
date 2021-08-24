@@ -32,7 +32,7 @@ function ReservationForm({
     handleCancel();
   };
 
-  console.log(reservation);
+  // console.log(reservation);
 
   return (
     <form onSubmit={onClickSubmit}>
