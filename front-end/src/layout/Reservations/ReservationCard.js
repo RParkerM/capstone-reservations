@@ -33,6 +33,8 @@ function ReservationCard({ reservation }) {
     //TODO: implement cancel reso
   }
 
+  //TODO: display date in a better way, 12hr
+
   return (
     <div className='card' style={{ width: "18rem" }}>
       <div className='card-body'>
