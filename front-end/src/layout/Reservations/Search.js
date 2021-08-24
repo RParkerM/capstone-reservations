@@ -10,7 +10,7 @@ import ReservationList from "./ReservationList";
  */
 
 function SearchReservations() {
-  const [mobileNumber, setMobileNumber] = useState("");
+  const [mobile_number, setMobileNumber] = useState("");
   const [reservations, setReservations] = useState([]);
   const [errors, setErrors] = useState(undefined);
 
@@ -22,7 +22,7 @@ function SearchReservations() {
   const submit = async (event) => {
     event.preventDefault();
     try {
-      const reservations = await listReservations({ mobileNumber });
+      const reservations = await listReservations({ mobile_number });
       console.debug(reservations);
       setReservations(reservations);
     } catch (err) {
@@ -48,7 +48,7 @@ function SearchReservations() {
             name='mobile_number'
             id='mobile_number'
             onChange={handleChange}
-            value={mobileNumber}
+            value={mobile_number}
             type='text'
           />
         </div>
