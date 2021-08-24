@@ -3,7 +3,6 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const {
   reservationExists,
 } = require("../reservations/reservations.controller");
-const { join } = require("../db/connection");
 
 const VALID_PROPERTIES = ["capacity", "table_name", "reservation_id"];
 
