@@ -24,7 +24,7 @@ function ReservationCard({ reservation, handleCancelReservation }) {
     status === "booked" ? (
       <Link
         to={`/reservations/${reservation_id}/seat`}
-        className='btn btn-primary'
+        className='btn mx-1 btn-primary'
       >
         Seat
       </Link>
@@ -33,13 +33,23 @@ function ReservationCard({ reservation, handleCancelReservation }) {
     status === "booked" ? (
       <button
         type='button'
-        className={"btn btn-danger"}
+        className={"btn mx-1 btn-danger"}
         onClick={onClickCancelReservation}
         data-reservation-id-cancel={reservation_id}
       >
         Cancel
       </button>
     ) : null;
+
+  const EditButton = ["booked", "seated"].includes(status) ? (
+    <Link
+      className={"btn mx-1 btn-secondary"}
+      to={`/reservations/${reservation_id}/edit`}
+    >
+      Edit
+      <i className='bi bi-pencil-square'></i>
+    </Link>
+  ) : null;
 
   function onClickCancelReservation(event) {
     event.preventDefault();
@@ -52,8 +62,6 @@ function ReservationCard({ reservation, handleCancelReservation }) {
     }
   }
 
-  //TODO: display date in a better way, 12hr
-
   return (
     <div className='card' style={{ width: "18rem" }}>
       <div className='card-body'>
@@ -64,15 +72,9 @@ function ReservationCard({ reservation, handleCancelReservation }) {
         <p data-reservation-id-status={reservation_id}>
           {capitalizeFirstLetter(status)}
         </p>
-        <Link
-          className={"btn btn-secondary"}
-          to={`/reservations/${reservation_id}/edit`}
-        >
-          Edit
-          <i className='bi bi-pencil-square'></i>
-        </Link>
-        {CancelButton}
         {SeatButton}
+        {EditButton}
+        {CancelButton}
       </div>
     </div>
   );

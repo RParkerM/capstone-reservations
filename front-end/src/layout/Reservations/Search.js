@@ -27,8 +27,11 @@ function SearchReservations() {
   const beginSearch = async () => {
     try {
       const reservations = await listReservations({ mobile_number });
-      console.debug(reservations);
-      setReservations(reservations);
+      //Only show reservations with the status of booked or seated
+      let filteredReservations = reservations.filter((reservation) =>
+        ["booked", "seated"].includes(reservation.status)
+      );
+      setReservations(filteredReservations);
     } catch (err) {
       setErrors(err);
     }
