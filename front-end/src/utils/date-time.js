@@ -1,6 +1,21 @@
 const dateFormat = /\d\d\d\d-\d\d-\d\d/;
 const timeFormat = /\d\d:\d\d/;
 
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 /**
  * Formats a Date object as YYYY-MM-DD.
  *
@@ -81,8 +96,15 @@ export function next(currentDate) {
   return asDateString(date);
 }
 
-export function getDateFromReso(reservationInfo) {
-  const { reservation_date, reservation_time } = reservationInfo;
+/**
+ *
+ * @param {object} dateAndTimeObject
+ * Must contain properties reservation_date string as "YYYY-MM-DD"
+ * and reservation_time string as 24HR "HH-MM"
+ * @returns {Date} Date representing those values
+ */
+export function getDateFromReso(dateAndTimeObject) {
+  const { reservation_date, reservation_time } = dateAndTimeObject;
   if (reservation_date && reservation_time) {
     const year = reservation_date.substring(0, 4);
     const month = reservation_date.substring(5, 7);
@@ -94,4 +116,18 @@ export function getDateFromReso(reservationInfo) {
     return date;
   }
   return undefined;
+}
+
+/**
+ *
+ * @param {string} dateString
+ * date string in YYYY-MM-DD format (ISO-8601 format is also valid)
+ * @returns {string}
+ * String formatted as "Month Day, YYYY"
+ * Ex: "May 1, 2000"
+ */
+export function formateDateAsMDY(dateString) {
+  const date = new Date(dateString);
+  const month = MONTHS[date.getMonth()];
+  return `${month} ${date.getDate()}, ${date.getFullYear()}`;
 }

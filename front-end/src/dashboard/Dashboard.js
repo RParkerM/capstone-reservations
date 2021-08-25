@@ -3,6 +3,7 @@ import { cancelReservation, listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import ReservationList from "../layout/Reservations/ReservationList";
 import TableList from "../layout/Tables/TableList";
+import { formateDateAsMDY } from "../utils/date-time";
 
 /**
  * Defines the dashboard page.
@@ -29,18 +30,11 @@ function Dashboard({ date }) {
         setTables(results[0]);
         setReservations(results[1]);
       })
-      .catch((errors) => setReservationsError);
+      .catch(setReservationsError);
     listTables({}, abortController.signal)
       .then(setTables)
       .catch(setReservationsError);
     return () => abortController.abort();
-    // const abortController = new AbortController();
-    // setReservationsError(null);
-    // listReservations({ date }, abortController.signal)
-    //   .then(setReservations)
-    //   .catch(setReservationsError);
-    // listTables({}, abortController.signal).then(setTables);
-    // return () => abortController.abort();
   }
 
   function handleCancelReservation(reservation_id) {
@@ -56,7 +50,7 @@ function Dashboard({ date }) {
     <main>
       <h1>Dashboard</h1>
       <div className='d-md-flex mb-3'>
-        <h4 className='mb-0'>Reservations for date {date}</h4>
+        <h4 className='mb-0'>Reservations for {formateDateAsMDY(date)}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
       <ReservationList

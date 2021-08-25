@@ -18,7 +18,12 @@ function TableList({ tables, handleErrors, refreshTables }) {
     />
   ));
 
-  return <div className='table-list'>{table_list}</div>;
+  return (
+    <section className='table-list-section'>
+      <h3>Tables</h3>
+      <div className='table-list'>{table_list}</div>
+    </section>
+  );
 }
 
 export default TableList;
