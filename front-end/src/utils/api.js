@@ -55,19 +55,13 @@ async function fetchJson(url, options, onCancel) {
 /**
  * Retrieves all existing reservations.
  * @returns {Promise<[reservation]>}
- *  a promise that resolves to a possibly empty array of reservation saved in the database.
+ *  a promise that resolves to a possibly empty array of reservations saved in the database.
  */
-
 export async function listReservations(params, signal) {
-  //TODO: Remove this
-  // return returnFakeResoData(params);
-
   const url = new URL(`${API_BASE_URL}/reservations`);
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
   );
-  // console.log(url);
-
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
@@ -78,18 +72,19 @@ export async function listReservations(params, signal) {
  * @returns {Promise<reservation>}
  *  a promise that resolves to a reservation object
  */
-
 export async function getReservation(reservationId, signal) {
-  // console.log("getting reso", reservationId);
   const url = new URL(`${API_BASE_URL}/reservations/${reservationId}`);
   return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime);
 }
 
+/**
+ * Retrieves all existing tables.
+ * @returns {Promise<[table]>}
+ *  a promise that resolves to a possibly empty array of tables saved in the database.
+ */
 export async function listTables(params, signal) {
-  // return returnFakeTableData(params);
-
   const url = new URL(`${API_BASE_URL}/tables`);
   Object.entries(params).forEach(([key, value]) =>
     url.searchParams.append(key, value.toString())
@@ -108,6 +103,15 @@ export async function createReservation(reservation, signal) {
   return await fetchJson(url, options, []);
 }
 
+/**
+ *
+ * @param {number} reservation_id
+ * reservation_id of the reservation to be cancelled.
+ * @param {AbortSignal} signal
+ * AbortSignal to abort fetching.
+ * @returns {object} `Reservation`
+ * Object representing the cancelled reservation.
+ */
 export async function cancelReservation(reservation_id, signal) {
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}/status`);
   const options = {
@@ -134,6 +138,12 @@ export async function editReservation(reservation, signal) {
   return reservation_returned;
 }
 
+/**
+ *
+ * @param {*} table
+ * @param {*} signal
+ * @returns
+ */
 export async function createTable(table, signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
   const options = {
@@ -146,6 +156,16 @@ export async function createTable(table, signal) {
   return table_returned;
 }
 
+/**
+ * Seat `Reservation` in database at specified `Table`.
+ * Reservation status is changed to seated.
+ * Table `reservation_id` is changed to reservation's `reservation_id`
+ * @param {number} tableId
+ * @param {number} reservation_id
+ * @param {AbortSignal} signal
+ * @returns {object} `Table`
+ * Object representing the seated table.
+ */
 export async function seatTable(tableId, reservation_id, signal) {
   const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
   const options = {
@@ -154,11 +174,19 @@ export async function seatTable(tableId, reservation_id, signal) {
     body: JSON.stringify({ data: { reservation_id } }),
     signal,
   };
-  // console.log(options);
   const table_returned = await fetchJson(url, options, []);
   return table_returned;
 }
 
+/**
+ *
+ * @param {number} tableId
+ * table_id at which the reservation should be finished.
+ * @param {AbortSignal} signal
+ * AbortSignal to abort fetching.
+ * @returns {object}  `Table`
+ * Object representing the finished table.
+ */
 export async function finishTable(tableId, signal) {
   const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
   const options = {
