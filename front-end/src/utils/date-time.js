@@ -127,9 +127,10 @@ export function getDateFromReso(dateAndTimeObject) {
  * Ex: "May 1, 2000"
  */
 export function formateDateAsMDY(dateString) {
-  const date = new Date(dateString);
-  const month = MONTHS[date.getMonth()];
-  return `${month} ${date.getDate()}, ${date.getFullYear()}`;
+  const year = dateString.slice(0, 4);
+  const month = MONTHS[parseInt(dateString.slice(5, 7))];
+  const date = parseInt(dateString.slice(8, 10));
+  return `${month} ${date}, ${year}`;
 }
 
 /**
