@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { formatTimeAs12HR } from "../../utils/date-time";
 
 /**
  * Defines the reservation card component.
@@ -57,7 +58,7 @@ function ReservationCard({ reservation, handleCancelReservation }) {
       <div className='card-body'>
         <h5 className='card-title'>{`${first_name} ${last_name}`}</h5>
         <p className='card-text'>{reservation_date}</p>
-        <p className='card-text'>{`${reservation_time}`}</p>
+        <p className='card-text'>{`${formatTimeAs12HR(reservation_time)}`}</p>
         <p data-reservation-id-status={reservation_id}>{status}</p>
         <Link
           className={"btn btn-secondary"}

@@ -131,3 +131,24 @@ export function formateDateAsMDY(dateString) {
   const month = MONTHS[date.getMonth()];
   return `${month} ${date.getDate()}, ${date.getFullYear()}`;
 }
+
+/**
+ *
+ * @param {string} timeString
+ * time string in 24HR (ie:"23:30")
+ * @returns {string}
+ * String formatted as "H:SS AM/PM"
+ * @example "13:30" = "1:30 PM"
+ */
+export function formatTimeAs12HR(timeString) {
+  let hour = parseInt(timeString.slice(0, 2));
+  const minutes = timeString.slice(3, 5);
+  let isAm = true;
+  if (hour >= 12) isAm = false;
+  if (hour < 1) {
+    hour = 12;
+  } else if (hour >= 13) {
+    hour -= 12;
+  }
+  return `${hour}:${minutes} ${isAm ? "AM" : "PM"}`;
+}

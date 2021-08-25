@@ -28,13 +28,9 @@ function NewReservation() {
 
   const submit = async (reservationInfo) => {
     const abortController = new AbortController();
-
-    // console.log(reservationInfo);
     if (isValidReservation(reservationInfo)) {
       try {
-        // const reservation =
         await createReservation(reservationInfo, abortController.signal);
-        // console.debug(reservation);
         history.push(`/dashboard?date=${reservationInfo.reservation_date}`);
       } catch (err) {
         setErrors(err);
