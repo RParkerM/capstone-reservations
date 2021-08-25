@@ -40,6 +40,7 @@ function EditReservation() {
     const errorMessages = getValidationErrors(reservationInfo);
     if (errorMessages.length > 0) {
       setErrors({ message: errorMessages.join("\n") });
+      console.error("Invalid reservation", reservationInfo, errorMessages);
       return false;
     } else {
       setErrors(undefined);
@@ -58,6 +59,7 @@ function EditReservation() {
       } catch (err) {
         setErrors(err);
       }
+    } else {
     }
   };
 
