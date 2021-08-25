@@ -44,6 +44,7 @@ function ReservationForm({
       <div className='form-group'>
         <label htmlFor='first_name'>First Name</label>
         <input
+          required
           className='form-control'
           name='first_name'
           id='first_name'
@@ -53,6 +54,7 @@ function ReservationForm({
         />
         <label htmlFor='last_name'>Last Name</label>
         <input
+          required
           className='form-control'
           name='last_name'
           id='last_name'
@@ -61,6 +63,8 @@ function ReservationForm({
         />
         <label htmlFor='mobile_number'>Phone Number</label>
         <input
+          type='tel'
+          required
           className='form-control'
           name='mobile_number'
           id='mobile_number'
@@ -69,6 +73,7 @@ function ReservationForm({
         />
         <label htmlFor='reservation_date'>Date</label>
         <input
+          required
           className='form-control'
           name='reservation_date'
           id='reservation_date'
@@ -80,6 +85,7 @@ function ReservationForm({
         />
         <label htmlFor='reservation_time'>Time</label>
         <input
+          required
           className='form-control'
           name='reservation_time'
           id='reservation_time'
@@ -94,6 +100,9 @@ function ReservationForm({
         }
         <label htmlFor='people'>Party Size</label>
         <input
+          type='number'
+          min={1}
+          required
           className='form-control'
           name='people'
           id='people'
