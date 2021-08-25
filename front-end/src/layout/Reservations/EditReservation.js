@@ -50,7 +50,6 @@ function EditReservation() {
   const submit = async (reservationInfo) => {
     const abortController = new AbortController();
 
-    // console.log(reservationInfo);
     if (isValidReservation(reservationInfo)) {
       try {
         // const reservation =
