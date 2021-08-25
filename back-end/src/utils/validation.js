@@ -27,7 +27,7 @@ function hasValidDateForReserving(reservation) {
   reso_date.setMinutes(reso_date.getMinutes() - reso_date.getTimezoneOffset());
 
   console.info("local time", getLocalTime());
-  console.info("now", reso_date);
+  console.info("reservation date/time", reso_date);
 
   const openTime = new Date(year, month - 1, day, 10, 30);
   const closeTime = new Date(year, month - 1, day, 21, 30);
