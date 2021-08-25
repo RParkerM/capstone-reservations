@@ -19,12 +19,9 @@ function TableCard({ table, handleErrors, refreshTables }) {
     )
       return;
     try {
-      // const table =
       await finishTable(table_id, abortController.signal);
-      // console.debug(table);
       refreshTables();
     } catch (err) {
-      // console.log("in finish table", err);
       handleErrors(err);
     }
   };

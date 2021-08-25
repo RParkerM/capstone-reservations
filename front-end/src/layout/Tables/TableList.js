@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import ErrorAlert from "../ErrorAlert";
 import TableCard from "./TableCard";
+import { listTables } from "../../utils/api";
 import "./TableList.css";
 
 /**
@@ -8,7 +10,19 @@ import "./TableList.css";
  *  the tables to display.
  * @returns {JSX.Element}
  */
-function TableList({ tables, handleErrors, refreshTables }) {
+function TableList({ handleErrors, refresh }) {
+  const [tables, setTables] = useState([]);
+  const [errors, setErrors] = useState(null);
+
+  useEffect(loadTables, []);
+
+  function loadTables() {
+    const abortController = new AbortController();
+    listTables({}, abortController.signal).then(setTables).catch(setErrors);
+
+    return () => abortController.abort();
+  }
+
   const table_list = tables.map((table, index) => (
     <TableCard
       table={table}
@@ -18,8 +32,14 @@ function TableList({ tables, handleErrors, refreshTables }) {
     />
   ));
 
+  function refreshTables() {
+    loadTables();
+    refresh();
+  }
+
   return (
     <section className='table-list-section'>
+      <ErrorAlert error={errors} />
       <h3>Tables</h3>
       <div className='table-list'>{table_list}</div>
     </section>
