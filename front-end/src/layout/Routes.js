@@ -47,7 +47,7 @@ function Routes() {
         <SearchReservations />
       </Route>
       <Route path='/dashboard'>
-        <Dashboard date={query.get("date") || today()} />
+        <Dashboard dateString={query.get("date") || today()} />
       </Route>
       <Route>
         <NotFound />
