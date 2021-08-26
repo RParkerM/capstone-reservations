@@ -3,7 +3,6 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 const {
   isYYYYMMDD,
-  is24HrTime,
   hasValidDateForReserving,
   hasValidPropertiesForReserving,
 } = require("../utils/validation");
@@ -19,6 +18,11 @@ const VALID_PROPERTIES = [
   "status",
 ];
 
+/**
+ * Express function that ensures `req.body.data` only includes properties defined in the `VALID_PROPERTIES` constant.
+ *
+ * Calls the express error handler if `req.body.data` includes a property not defined in `VALID_PROPERTIES`
+ */
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
   const invalidFields = Object.keys(data).filter(
@@ -33,8 +37,16 @@ function hasOnlyValidProperties(req, res, next) {
   next();
 }
 
+/**
+ * Express function that ensures `req.body.data` has valid properties for updating.
+ * If not, it will call the express error handler with validation issues.
+ */
 function hasValidPropertiesForUpdating(req, res, next) {
   const updatedReservation = { ...req.body.data };
+
+  //The next 3 lines delete reservation_id, created_at, and updated_at
+  //These 3 lines are included from the Postgres DB rows, however we do not want
+  // to update them, even if they are included in the PUT request.
   delete updatedReservation.reservation_id;
   delete updatedReservation.created_at;
   delete updatedReservation.updated_at;
@@ -62,10 +74,11 @@ function hasValidPropertiesForUpdating(req, res, next) {
 }
 
 /**
- * Validates query parameter date matches YYYY-MM-DD format
+ * Verifies that the request contains a query parameter with either the name `date` which is properly formatted as YYYY-MM-DD, or the name `mobile_number` which can be any number.
+ *
+ * This function will call the express error handler if neither `date` nor `mobile_number` is a query parameter in the URL.
  */
-function hasValidDateQuery(req, res, next) {
-  ///TODO: change this to hasValidDateOrTime - check for valid query or time
+function hasValidQuery(req, res, next) {
   const { date, mobile_number } = req.query;
   if (!date && !mobile_number)
     return next({
@@ -76,6 +89,7 @@ function hasValidDateQuery(req, res, next) {
 
   //Will list reservations by mobile number if included
   //This implementation will ignore date if mobile_number is included
+  //Due to the wide variances in formats for mobile numbers, this is not validated.
   if (mobile_number) {
     res.locals.mobile_number = mobile_number;
     return next();
@@ -90,15 +104,11 @@ function hasValidDateQuery(req, res, next) {
   next();
 }
 
-function isValidDate(req, res, next) {
-  const validatedDate = hasValidDateForReserving(req.body.data);
-  if (!validatedDate.isValid) {
-    return next({ status: 400, message: validatedDate.message });
-  }
-
-  next();
-}
-
+/**
+ * Calls `hasValidPropertiesForReserving` validation, which ensures that all
+ * required properties exist and are valid. Calls express error handler if any
+ * validation errors exist.
+ */
 function hasRequiredProperties(req, res, next) {
   const { data } = req.body;
   if (!data)
@@ -114,6 +124,10 @@ function hasRequiredProperties(req, res, next) {
   next();
 }
 
+/**
+ * Verifies that `req.body.data.status` is equal to "booked" if it exists.
+ * "booked" is the only status allowed for `status`.
+ */
 function hasValidStatusForBooking(req, res, next) {
   const { status } = req.body.data;
   if (status && status != "booked")
@@ -124,6 +138,11 @@ function hasValidStatusForBooking(req, res, next) {
   next();
 }
 
+/**
+ * Verifies that previous reservation status is not "finished" as we cannot
+ * update finished reservations. Also verifies that new reservation status is a
+ * valid status.
+ */
 function hasValidStatusForUpdating(req, res, next) {
   const prevStatus = res.locals.reservation.status;
   if (prevStatus === "finished")
@@ -179,7 +198,8 @@ async function list(req, res) {
   } else {
     const data = await service.list(res.locals.date);
     const unfinishedReservations = data.filter(
-      (reservation) => reservation.status != "finished"
+      (reservation) =>
+        reservation.status != "finished" && reservation.status != "cancelled"
     );
     res.status(200).json({ data: unfinishedReservations });
   }
@@ -204,11 +224,10 @@ async function update(req, res) {
 }
 
 module.exports = {
-  list: [hasValidDateQuery, asyncErrorBoundary(list)],
+  list: [hasValidQuery, asyncErrorBoundary(list)],
   create: [
     hasRequiredProperties,
     hasOnlyValidProperties,
-    isValidDate,
     hasValidStatusForBooking,
     asyncErrorBoundary(create),
   ],
