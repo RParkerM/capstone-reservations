@@ -18,12 +18,24 @@ function create(table) {
     .then((createdRecords) => createdRecords[0]);
 }
 
-function update(updatedTable) {
-  return knex(`${TABLE}`)
-    .select("*")
-    .where({ table_id: updatedTable.table_id })
-    .update(updatedTable, "*")
-    .then((updatedRecords) => updatedRecords[0]);
+async function seat(table_id, reservation_id) {
+  try {
+    await knex.transaction(async (trx) => {
+      const table = await trx(`${TABLE}`)
+        .select("*")
+        .where({ table_id })
+        .update({ reservation_id }, "*")
+        .then((updatedRecords) => updatedRecords[0]);
+
+      await trx(`${RES_TABLE}`)
+        .select("*")
+        .where({ reservation_id })
+        .update({ status: "seated" }, "*");
+      return table;
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function finish(table_id, reservation_id) {
@@ -44,27 +56,12 @@ async function finish(table_id, reservation_id) {
   } catch (error) {
     console.error(error);
   }
-
-  // return knex(`${TABLE}`)
-  //   .select("*")
-  //   .where({ table_id })
-  //   .update({ reservation_id: null }, "*")
-  //   .then((updatedRecords) => updatedRecords[0]);
-}
-
-function modifyReservationStatus(reservation_id, status) {
-  return knex(`${RES_TABLE}`)
-    .select("*")
-    .where({ reservation_id })
-    .update({ status }, "*")
-    .then((updatedRecords) => updatedRecords[0]);
 }
 
 module.exports = {
   list,
   read,
   create,
-  update,
+  seat,
   finish,
-  modifyReservationStatus,
 };

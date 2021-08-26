@@ -6,6 +6,8 @@ const {
 
 const VALID_PROPERTIES = ["capacity", "table_name", "reservation_id"];
 
+//TODO: write JSDocs
+
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
   const invalidFields = Object.keys(data).filter(
@@ -152,11 +154,7 @@ async function seat(req, res) {
   const reservation_id = res.locals.reservationId;
   const updatedTable = { ...res.locals.table, reservation_id };
   console.log(updatedTable);
-  const data = await service.update(updatedTable);
-  const reservation = await service.modifyReservationStatus(
-    reservation_id,
-    "seated"
-  );
+  const data = await service.seat(updatedTable.table_id, reservation_id);
   res.status(200).json({ data });
 }
 
