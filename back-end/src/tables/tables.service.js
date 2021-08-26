@@ -8,7 +8,6 @@ function list() {
 }
 
 function read(table_id) {
-  // console.log("reading in service");
   return knex(`${TABLE}`).select("*").where({ table_id }).first();
 }
 
@@ -27,12 +26,30 @@ function update(updatedTable) {
     .then((updatedRecords) => updatedRecords[0]);
 }
 
-function finish(table_id) {
-  return knex(`${TABLE}`)
-    .select("*")
-    .where({ table_id })
-    .update({ reservation_id: null }, "*")
-    .then((updatedRecords) => updatedRecords[0]);
+async function finish(table_id, reservation_id) {
+  try {
+    await knex.transaction(async (trx) => {
+      const table = await trx(`${TABLE}`)
+        .select("*")
+        .where({ table_id })
+        .update({ reservation_id: null }, "*")
+        .then((updatedRecords) => updatedRecords[0]);
+
+      await trx(`${RES_TABLE}`)
+        .select("*")
+        .where({ reservation_id })
+        .update({ status: "finished" }, "*");
+      return table;
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  // return knex(`${TABLE}`)
+  //   .select("*")
+  //   .where({ table_id })
+  //   .update({ reservation_id: null }, "*")
+  //   .then((updatedRecords) => updatedRecords[0]);
 }
 
 function modifyReservationStatus(reservation_id, status) {

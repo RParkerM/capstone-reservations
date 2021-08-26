@@ -97,7 +97,6 @@ function canSeatReservation(req, res, next) {
 }
 
 async function tableExists(req, res, next) {
-  // console.log("tableExists");
   const { tableId } = req.params;
   if (tableId === undefined)
     return next({
@@ -105,7 +104,6 @@ async function tableExists(req, res, next) {
       message: "Internal error. Table id is missing",
     });
   const table = await service.read(tableId);
-  // console.log(table);
   if (!table)
     return next({
       status: 404,
@@ -164,12 +162,8 @@ async function seat(req, res) {
 
 async function finishTable(req, res) {
   const { table_id, reservation_id } = res.locals.table;
-  const table = await service.finish(table_id);
+  const table = await service.finish(table_id, reservation_id);
   console.debug(table);
-  const reservation = await service.modifyReservationStatus(
-    reservation_id,
-    "finished"
-  );
   res.status(200).json({ table });
 }
 
