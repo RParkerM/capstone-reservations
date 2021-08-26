@@ -37,8 +37,6 @@ function ReservationForm({
     handleCancel();
   };
 
-  // console.log(reservation);
-
   return (
     <form onSubmit={onClickSubmit}>
       <div className='form-group'>
@@ -124,7 +122,5 @@ function ReservationForm({
     </form>
   );
 }
-
-///TODO display any error messages returned from the API
 
 export default ReservationForm;
