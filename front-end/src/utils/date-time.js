@@ -128,9 +128,25 @@ export function getDateFromReso(dateAndTimeObject) {
  */
 export function formateDateAsMDY(dateString) {
   const year = dateString.slice(0, 4);
-  const month = MONTHS[parseInt(dateString.slice(5, 7))];
+  const month = MONTHS[parseInt(dateString.slice(5, 7)) - 1];
   const date = parseInt(dateString.slice(8, 10));
   return `${month} ${date}, ${year}`;
+}
+
+/**
+ *
+ * @param {string} dateString
+ * date string in YYYY-MM-DD format (ISO-8601 format is also valid)
+ * @returns {string}
+ * String formatted as "Month Day, YYYY"
+ * Ex: "May 1, 2000"
+ */
+export function isTuesday(dateString) {
+  const year = dateString.slice(0, 4);
+  const month = parseInt(dateString.slice(5, 7)) - 1;
+  const dayOfMonth = parseInt(dateString.slice(8, 10));
+  const date = new Date(year, month, dayOfMonth, 0, 0, 0, 0);
+  return date.getDay() === 2;
 }
 
 /**

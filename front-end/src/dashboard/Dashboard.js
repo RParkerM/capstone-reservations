@@ -3,7 +3,13 @@ import { cancelReservation, listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import ReservationList from "../layout/Reservations/ReservationList";
 import TableList from "../layout/Tables/TableList";
-import { formateDateAsMDY, previous, next, today } from "../utils/date-time";
+import {
+  formateDateAsMDY,
+  previous,
+  next,
+  today,
+  isTuesday,
+} from "../utils/date-time";
 
 /**
  * Defines the dashboard page.
@@ -17,11 +23,11 @@ function Dashboard({ dateString }) {
   const [date, setDate] = useState(dateString);
 
   useEffect(loadDashboard, [date]);
-  console.log(dateString, date);
 
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
+    console.log("Today is " + (isTuesday(date) ? "" : "not") + "a Tuesday");
 
     listReservations({ date }, abortController.signal)
       .then((data) => {
@@ -32,6 +38,7 @@ function Dashboard({ dateString }) {
         );
       })
       .catch(setReservationsError);
+
     return () => abortController.abort();
   }
 
@@ -57,34 +64,37 @@ function Dashboard({ dateString }) {
   return (
     <main>
       <h1>Dashboard</h1>
-      <div className='d-md-flex mb-3'>
-        <h4 className='mb-0'>Reservations for {formateDateAsMDY(date)}</h4>
+      <div className='d-md-flex mb-3 align-items-center'>
+        <h4 className='mb-0 mr-2'>Reservations for {formateDateAsMDY(date)}</h4>
+        <div>
+          <button
+            type='button'
+            className='btn text-nowrap btn-primary m-2'
+            name='prevDayBtn'
+            onClick={goToPrevDay}
+          >
+            Previous Day
+          </button>
+          <button
+            type='button'
+            className='btn text-nowrap btn-primary m-2'
+            name='todayBtn'
+            onClick={goToToday}
+          >
+            Today
+          </button>
+          <button
+            type='button'
+            className='btn text-nowrap btn-primary m-2'
+            name='nextDayBtn'
+            onClick={goToNextDay}
+          >
+            Next Day
+          </button>
+        </div>
       </div>
+
       <ErrorAlert error={reservationsError} />
-      <button
-        type='button'
-        className='btn btn-primary'
-        name='nextDayBtn'
-        onClick={goToNextDay}
-      >
-        Next Day
-      </button>
-      <button
-        type='button'
-        className='btn btn-primary'
-        name='todayBtn'
-        onClick={goToToday}
-      >
-        Go to Today
-      </button>
-      <button
-        type='button'
-        className='btn btn-primary'
-        name='prevDayBtn'
-        onClick={goToPrevDay}
-      >
-        Previous Day
-      </button>
       <ReservationList
         reservations={reservations}
         handleCancelReservation={handleCancelReservation}
