@@ -63,6 +63,8 @@ function NewTable({ table = {}, handleSubmit = () => {} }) {
 
   return (
     <>
+      <h1 className='mb-3'>Create Table</h1>
+
       <ErrorAlert error={errors} />
       <form onSubmit={submit}>
         <div className='form-group'>

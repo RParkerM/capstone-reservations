@@ -53,7 +53,6 @@ function EditReservation() {
 
     if (isValidReservation(reservationInfo)) {
       try {
-        // const reservation =
         await editReservation(reservationInfo, abortController.signal);
         history.push(`/dashboard?date=${reservationInfo.reservation_date}`);
       } catch (err) {
@@ -69,6 +68,7 @@ function EditReservation() {
 
   return (
     <>
+      <h1 className='mb-3'>Edit Reservation</h1>
       <ErrorAlert error={errors} />
       <ReservationForm
         handleSubmit={submit}

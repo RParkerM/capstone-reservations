@@ -58,6 +58,8 @@ function SearchReservations() {
 
   return (
     <>
+      <h1 className='mb-3'>Search Reservations</h1>
+
       <ErrorAlert error={errors} />
       <form onSubmit={submit}>
         <div className='form-group'>

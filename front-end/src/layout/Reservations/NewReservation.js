@@ -44,6 +44,8 @@ function NewReservation() {
 
   return (
     <>
+      <h1 className='mb-3'>Create Reservation</h1>
+
       <ErrorAlert error={errors} />
       <ReservationForm handleSubmit={submit} handleCancel={handleCancel} />
     </>
