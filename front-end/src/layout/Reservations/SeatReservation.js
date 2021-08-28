@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router";
 import { listTables, getReservation, seatTable } from "../../utils/api";
+import { formatTimeAs12HR } from "../../utils/date-time";
 import ErrorAlert from "../ErrorAlert";
 
 /**
@@ -11,7 +12,7 @@ function SeatReservation() {
   const history = useHistory();
 
   const [tables, setTables] = useState([]);
-  const [reservation, setReservation] = useState([]);
+  const [reservation, setReservation] = useState({});
   const [errors, setErrors] = useState(null);
   const { reservationId } = useParams();
   const [tableId, setTableId] = useState("");
@@ -53,7 +54,6 @@ function SeatReservation() {
   }
 
   const SeatReservationAtTable = async () => {
-    // console.log("seating table...");
     const abortController = new AbortController();
     setErrors(null);
     try {
@@ -83,20 +83,27 @@ function SeatReservation() {
     </option>
   ));
 
+  const { first_name, last_name, people, reservation_time } = reservation;
+
   return (
     <>
       <ErrorAlert error={errors} />
       <form onSubmit={submit}>
-        <label>{`${reservation.first_name} ${reservation.last_name}`}</label>
+        <h3 className='my-2'>
+          {`Now seating ${reservation.first_name} ${reservation.last_name}, party of ${reservation.people}`}
+        </h3>
+        <p>{`Reservation time: ${reservation.reservation_time}`}</p>
         <label htmlFor='table_id'>Seat at table:</label>
         <select
-          className='form-control'
+          className='form-control my-2'
           name='table_id'
           id='table_id'
           value={tableId}
           onChange={handleChange}
         >
-          <option value=''>--Please choose a table--</option>
+          <option value='' selected disabled hidden>
+            --Please choose a table--
+          </option>
           {tableOptions}
         </select>
         <button type='submit' className='btn btn-primary m-2'>
@@ -109,9 +116,6 @@ function SeatReservation() {
         >
           Cancel
         </button>
-        {/* {JSON.stringify(tables)}
-        <p>Reservation follows:</p>
-        {JSON.stringify(reservation)} */}
       </form>
     </>
   );
