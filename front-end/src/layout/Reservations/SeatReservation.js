@@ -12,7 +12,7 @@ function SeatReservation() {
   const history = useHistory();
 
   const [tables, setTables] = useState([]);
-  const [reservation, setReservation] = useState({});
+  const [reservation, setReservation] = useState({ reservation_time: "00:00" });
   const [errors, setErrors] = useState(null);
   const { reservationId } = useParams();
   const [tableId, setTableId] = useState("");
@@ -37,12 +37,10 @@ function SeatReservation() {
 
   function handleChange(event) {
     setTableId(event.target.value);
-    // console.log(event.target.value);
   }
 
   function submit(event) {
     event.preventDefault();
-    // console.log("submitting");
     setErrors(null);
     if (tableId === "") {
       setErrors("Please select a table.");
@@ -90,9 +88,9 @@ function SeatReservation() {
       <ErrorAlert error={errors} />
       <form onSubmit={submit}>
         <h3 className='my-2'>
-          {`Now seating ${reservation.first_name} ${reservation.last_name}, party of ${reservation.people}`}
+          {`Now seating ${first_name} ${last_name}, party of ${people}`}
         </h3>
-        <p>{`Reservation time: ${reservation.reservation_time}`}</p>
+        <p>{`Reservation time: ${formatTimeAs12HR(reservation_time)}`}</p>
         <label htmlFor='table_id'>Seat at table:</label>
         <select
           className='form-control my-2'

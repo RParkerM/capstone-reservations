@@ -3,13 +3,7 @@ import { cancelReservation, listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import ReservationList from "../layout/Reservations/ReservationList";
 import TableList from "../layout/Tables/TableList";
-import {
-  formateDateAsMDY,
-  previous,
-  next,
-  today,
-  isTuesday,
-} from "../utils/date-time";
+import { formateDateAsMDY, previous, next, today } from "../utils/date-time";
 
 /**
  * Defines the dashboard page.
@@ -27,7 +21,6 @@ function Dashboard({ dateString }) {
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
-    console.log("Today is " + (isTuesday(date) ? "" : "not") + "a Tuesday");
 
     listReservations({ date }, abortController.signal)
       .then((data) => {
